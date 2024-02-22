@@ -13,8 +13,9 @@ def get_all_questions_from_excel_file(exam: str) -> [Question]:
     wb = openpyxl.load_workbook(filename=f'{file}', data_only=True)
     page_name = wb.sheetnames
     page_name = str(page_name[0])
-    col_id_question = map_excel['Код вопроса']
-    col_box_question = map_excel['Блок вопросов']
+    column_id_question = map_excel['Код вопроса']
+    column_category_question = map_excel['Раздел курса']
+    column_box_question = map_excel['Блок вопросов']
     column_enable_question = map_excel['Действующий 1-да, 0-нет']
 
     column_a = 'a'
@@ -38,10 +39,10 @@ def get_all_questions_from_excel_file(exam: str) -> [Question]:
 
         enable_question = read_excel(wb, page_name, column_enable_question, i)
         if enable_question:
-            q = Question
+            q = Question()
 
-            q.id_question = read_excel(wb, page_name, col_id_question, i)
-            q.box_question = read_excel(wb, page_name, col_box_question, i)
+            q.id_question = read_excel(wb, page_name, column_id_question, i)
+            q.box_question = read_excel(wb, page_name, column_box_question, i)
 
             image_pattern = r'\s*\[(.*)\]\s*'
             if re.search(image_pattern, q.box_question):
@@ -59,7 +60,7 @@ def get_all_questions_from_excel_file(exam: str) -> [Question]:
             q.answer_c = read_excel(wb, page_name, column_main, i + 3)
             q.answer_d = read_excel(wb, page_name, column_main, i + 4)
             num_q += 1
-            q.category = read_excel(wb, page_name, "D", i)
+            q.category = read_excel(wb, page_name, column_category_question, i)
             all_questions.append(q)
         i += 3
 
