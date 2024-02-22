@@ -34,6 +34,7 @@ def get_all_questions_from_excel_file(exam: str) -> [Question]:
         b = read_excel(wb, page_name, column_a, i + 2).lower()
         c = read_excel(wb, page_name, column_a, i + 3).lower()
         d = read_excel(wb, page_name, column_a, i + 4).lower()
+
         if b not in ('b', 'в') or c not in ('c', 'с') or d != 'd':
             continue
 
