@@ -5,22 +5,27 @@ import openpyxl
 from Question import Question
 
 
-def create_excel_file_for_ispring(questions: [Question]):
+def get_all_category_from_questions(questions: list(Question)) -> list(str):
     categories = []
     for q in questions:
         if q.category not in categories:
             categories.append(q.category)
+    return sorted(categories)
+
+
+def create_category_file(questions):
+    categories = get_all_category_from_questions(questions)
+
     os.makedirs(f'./Category/{questions[0].exam}', exist_ok=True)
     category_file = f'./Category/{questions[0].exam}/category.txt'
-    with open(category_file, 'w') as f:
-        f.write('')
 
-    with open(category_file, 'a', encoding='utf-8') as f:
-        for category in categories:
-            f.write(category + '\n')
+    with open(category_file, 'w', encoding='utf-8') as f:
+        f.write('\n'.join(categories))
 
+
+def create_excel_file_for_ispring(questions: [Question]):
     questions_by_category = {}
-    for category in categories:
+    for category in get_all_category_from_questions(questions):
         box_questions = {}
         for q in questions:
             if q.category == category:
