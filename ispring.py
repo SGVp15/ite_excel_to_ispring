@@ -5,7 +5,7 @@ import openpyxl
 from Question import Question
 
 
-def get_all_category_from_questions(questions: list(Question)) -> list(str):
+def get_all_category_from_questions(questions: list[Question]) -> list[str]:
     categories = []
     for q in questions:
         if q.category not in categories:
