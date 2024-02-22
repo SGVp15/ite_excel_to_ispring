@@ -8,12 +8,6 @@ from Excel.config import file_xlsx, map_excel
 from Question import Question
 
 
-# class excel():
-#     def read_excel(excel, page_name, column, row):
-#         sheet_ranges = excel[page_name]
-#         return str(sheet_ranges[f'{column}{row}'].value)
-
-
 def get_all_questions_from_excel_file(exam: str) -> [Question]:
     file = file_xlsx[exam]
     wb = openpyxl.load_workbook(filename=f'{file}', data_only=True)
@@ -48,14 +42,17 @@ def get_all_questions_from_excel_file(exam: str) -> [Question]:
 
             q.id_question = read_excel(wb, page_name, col_id_question, i)
             q.box_question = read_excel(wb, page_name, col_box_question, i)
-            image_pattern = r'\s*\[(.*)\]\s*]'
+
+            image_pattern = r'\s*\[(.*)\]\s*'
             if re.search(image_pattern, q.box_question):
                 q.image = re.findall(pattern=image_pattern, string=q.box_question)[0]
                 q.image = q.image.strip()
             else:
                 q.image = ''
+
             if q.box_question == 'None':
                 q.box_question = None
+
             q.text_question = read_excel(wb, page_name, column_main, i)
             q.answer_a = read_excel(wb, page_name, column_main, i + 1)
             q.answer_b = read_excel(wb, page_name, column_main, i + 2)

@@ -58,8 +58,8 @@ def create_excel_file_for_ispring(questions: [Question]):
             # Create a list of values to write to the Excel file
             for q in l_quest:
                 row += 1
-                values_to_write = ['MC', q.text_question, '', '', '',
-                                   f'*{q.ans_a}', q.ans_b, q.ans_c, q.ans_d,
+                values_to_write = ['MC', q.text_question, q.image, '', '',
+                                   f'*{q.answer_a}', q.answer_b, q.answer_c, q.answer_d,
                                    '', '', '', '', '', '', '', '', 1]
 
                 # Write the numbers to the worksheet
