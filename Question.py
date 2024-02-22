@@ -1,15 +1,12 @@
-from dataclasses import dataclass
-
-
-@dataclass
 class Question:
-    id_question: str
-    text_question: str
-    answer_a: str
-    answer_b: str
-    answer_c: str
-    answer_d: str
-    image: str
-    box_question: int
-    category: str
-    exam: str
+    def __init__(self):
+        self.id_question: str = ''
+        self.text_question: str = ''
+        self.answer_a: str = ''
+        self.answer_b: str = ''
+        self.answer_c: str = ''
+        self.answer_d: str = ''
+        self.image: str = ''
+        self.box_question: int
+        self.category: str = ''
+        self.exam: str = ''
