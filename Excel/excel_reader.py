@@ -4,12 +4,11 @@ import re
 
 import openpyxl
 
-from Excel.config import file_xlsx, map_excel
+from Excel.config import  map_excel
 from Question import Question
 
 
-def get_all_questions_from_excel_file(exam: str) -> [Question]:
-    file = file_xlsx[exam]
+def get_all_questions_from_excel_file(file: str) -> [Question]:
     wb = openpyxl.load_workbook(filename=f'{file}', data_only=True)
     page_name = wb.sheetnames
     page_name = str(page_name[0])
@@ -25,7 +24,8 @@ def get_all_questions_from_excel_file(exam: str) -> [Question]:
     num_q = 0
 
     i = 0
-    while i < wb[page_name].max_row:
+    max_row = wb[page_name].max_row
+    while i <= max_row:
         i += 1
         a = read_excel(wb, page_name, column_a, i + 1).lower()
         if a not in ('a', 'а'):
@@ -76,4 +76,5 @@ def save_json_questions(path_questions, all_questions):
 
 def read_excel(excel, page_name, column, row):
     sheet_ranges = excel[page_name]
-    return str(sheet_ranges[f'{column}{row}'].value).strip()
+    value = str(sheet_ranges[f'{column}{row}'].value).strip()
+    return value

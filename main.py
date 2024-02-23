@@ -3,7 +3,7 @@ import os
 import random
 
 from Excel.excel_reader import get_all_questions_from_excel_file
-from config import dir_out
+from config import dir_out, input_dir
 from ispring import create_excel_file_for_ispring
 from Question import Question
 
@@ -49,10 +49,14 @@ def get_from_json(path: str) -> dict:
 
 
 if __name__ == '__main__':
-    exams = []
-    exams.extend(['ITIL4FC', 'RCVC', 'CPIC', 'ICSC', 'Cobit2019C',
-                  'BAFC', 'BASRMC'])
+    exams = {}
+    for file in os.listdir('./input'):
+        exams[os.path.basename(os.path.join(os.getcwd(), input_dir, file))[:-5]] = os.path.join(os.getcwd(), input_dir,
+                                                                                                file)
 
-    for exam in exams:
-        print(f'\n{exam}[  create_new_tickets  ]')
-        create_excel_file_for_ispring(get_all_questions_from_excel_file(exam))
+    for exam_name, file in exams.items():
+        questions = get_all_questions_from_excel_file(file)
+
+        for q in questions:
+            q.exam = exam_name
+        create_excel_file_for_ispring(questions)
