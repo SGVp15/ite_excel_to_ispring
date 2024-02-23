@@ -3,7 +3,7 @@ import os
 import openpyxl
 
 from Question import Question
-from config import template_ispring
+from config import template_ispring, output_dir
 
 
 def get_all_category_from_questions(questions: list[Question]) -> list[str]:
@@ -17,9 +17,9 @@ def get_all_category_from_questions(questions: list[Question]) -> list[str]:
 def create_category_file(questions):
     categories = get_all_category_from_questions(questions)
 
-    os.makedirs(f'./Category/{questions[0].exam}', exist_ok=True)
+    os.makedirs(f'{output_dir}/{questions[0].exam}', exist_ok=True)
 
-    category_file = f'./Category/{questions[0].exam}/category.txt'
+    category_file = f'{output_dir}/{questions[0].exam}/category.txt'
     with open(category_file, 'w', encoding='utf-8') as f:
         f.write('\n'.join(categories))
 
@@ -45,8 +45,15 @@ def create_dict_category_questions(questions: [Question]) -> dict:
 def create_excel_file_for_ispring(questions: [Question]):
     create_category_file(questions)
     questions_by_category = create_dict_category_questions(questions)
-    # for category, list_question in questions_by_category.items():
-    #     print(f'{category}\t\t{len(list_question)}')
+
+    ispring_category_file = f'{output_dir}/{questions[0].exam}/ispring_import.txt'
+    with open(ispring_category_file, 'w', encoding='utf-8') as f:
+        count_all_sum = 0
+        for category, list_question in questions_by_category.items():
+            count_proc_cat = round(len(list_question) / len(questions) * 30)
+            count_all_sum += count_proc_cat
+            f.write(f'{category}\t\t{count_proc_cat}\n')
+        f.write(str(count_all_sum))
 
     head = read_template()
     for category, list_question in questions_by_category.items():
@@ -68,8 +75,8 @@ def create_excel_file_for_ispring(questions: [Question]):
                 worksheet.cell(row=row + 1, column=i + 1, value=str(v))
 
         # Save the workbook to a file
-        os.makedirs(os.path.join(os.getcwd(), 'Category', questions[0].exam), exist_ok=True)
-        workbook.save(f'./Category/{questions[0].exam}/{category}.xlsx')
+        os.makedirs(os.path.join(output_dir, questions[0].exam), exist_ok=True)
+        workbook.save(f'{output_dir}/{questions[0].exam}/{category}.xlsx')
 
     # max_group = 0
     # for category, list_quest in questions_by_category.items():

@@ -50,7 +50,7 @@ def get_from_json(path: str) -> dict:
 
 if __name__ == '__main__':
     exams = {}
-    for file in os.listdir('./input'):
+    for file in os.listdir(input_dir):
         exams[os.path.basename(os.path.join(os.getcwd(), input_dir, file))[:-5]] = os.path.join(os.getcwd(), input_dir,
                                                                                                 file)
 
@@ -59,4 +59,5 @@ if __name__ == '__main__':
 
         for q in questions:
             q.exam = exam_name
+        # print(exam_name)
         create_excel_file_for_ispring(questions)
