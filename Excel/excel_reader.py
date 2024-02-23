@@ -3,8 +3,8 @@ import os
 import re
 
 import openpyxl
+from openpyxl.utils import get_column_letter
 
-from Excel.config import  map_excel
 from Question import Question
 
 
@@ -12,10 +12,15 @@ def get_all_questions_from_excel_file(file: str) -> [Question]:
     wb = openpyxl.load_workbook(filename=f'{file}', data_only=True)
     page_name = wb.sheetnames
     page_name = str(page_name[0])
+
+    map_excel = {}
+    max_column = wb[page_name].max_column
+    for col in range(1, max_column):
+        map_excel[read_excel(wb, page_name, get_column_letter(col), 1)] = get_column_letter(col)
     column_id_question = map_excel['Код вопроса']
     column_category_question = map_excel['Раздел курса']
     column_box_question = map_excel['Блок вопросов']
-    column_enable_question = map_excel['Действующий 1-да, 0-нет']
+    column_enable_question = map_excel.get('Действующий 1-да, 0-нет', 'L')
 
     column_a = 'a'
     column_main = 'b'
@@ -39,7 +44,7 @@ def get_all_questions_from_excel_file(file: str) -> [Question]:
             continue
 
         enable_question = read_excel(wb, page_name, column_enable_question, i)
-        if enable_question:
+        if enable_question in ('1', 1):
             q = Question()
 
             q.id_question = read_excel(wb, page_name, column_id_question, i)

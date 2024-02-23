@@ -59,5 +59,5 @@ if __name__ == '__main__':
 
         for q in questions:
             q.exam = exam_name
-        # print(exam_name)
+        print(exam_name)
         create_excel_file_for_ispring(questions)

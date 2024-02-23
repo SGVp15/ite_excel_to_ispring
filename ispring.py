@@ -1,7 +1,6 @@
 import os
 
 import openpyxl
-
 from Question import Question
 from config import template_ispring, output_dir
 
@@ -14,18 +13,19 @@ def get_all_category_from_questions(questions: list[Question]) -> list[str]:
     return sorted(categories)
 
 
-def create_category_file(questions,questions_by_category):
+def create_category_file(questions, questions_by_category):
     os.makedirs(f'{output_dir}/{questions[0].exam}', exist_ok=True)
-
-    questions_by_category = create_dict_category_questions(questions)
 
     ispring_category_file = f'{output_dir}/{questions[0].exam}/ispring_import.txt'
     with open(ispring_category_file, 'w', encoding='utf-8') as f:
         count_all_sum = 0
         for category, list_question in questions_by_category.items():
             count_proc_cat = round(len(list_question) / len(questions) * 30)
+            if len(list_question) == 1:
+                count_proc_cat = 1
             count_all_sum += count_proc_cat
-            f.write(f'{category}\t\t{count_proc_cat}\n')
+            f.write(f'{category}\t\t{count_proc_cat}\t{len(list_question)}\t{len(questions)}\t'
+                    f'{len(list_question) / len(questions) * 30}\n')
         f.write(str(count_all_sum))
 
 
