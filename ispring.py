@@ -14,14 +14,19 @@ def get_all_category_from_questions(questions: list[Question]) -> list[str]:
     return sorted(categories)
 
 
-def create_category_file(questions):
-    categories = get_all_category_from_questions(questions)
-
+def create_category_file(questions,questions_by_category):
     os.makedirs(f'{output_dir}/{questions[0].exam}', exist_ok=True)
 
-    category_file = f'{output_dir}/{questions[0].exam}/category.txt'
-    with open(category_file, 'w', encoding='utf-8') as f:
-        f.write('\n'.join(categories))
+    questions_by_category = create_dict_category_questions(questions)
+
+    ispring_category_file = f'{output_dir}/{questions[0].exam}/ispring_import.txt'
+    with open(ispring_category_file, 'w', encoding='utf-8') as f:
+        count_all_sum = 0
+        for category, list_question in questions_by_category.items():
+            count_proc_cat = round(len(list_question) / len(questions) * 30)
+            count_all_sum += count_proc_cat
+            f.write(f'{category}\t\t{count_proc_cat}\n')
+        f.write(str(count_all_sum))
 
 
 def create_dict_category_questions(questions: [Question]) -> dict:
@@ -43,17 +48,8 @@ def create_dict_category_questions(questions: [Question]) -> dict:
 
 
 def create_excel_file_for_ispring(questions: [Question]):
-    create_category_file(questions)
     questions_by_category = create_dict_category_questions(questions)
-
-    ispring_category_file = f'{output_dir}/{questions[0].exam}/ispring_import.txt'
-    with open(ispring_category_file, 'w', encoding='utf-8') as f:
-        count_all_sum = 0
-        for category, list_question in questions_by_category.items():
-            count_proc_cat = round(len(list_question) / len(questions) * 30)
-            count_all_sum += count_proc_cat
-            f.write(f'{category}\t\t{count_proc_cat}\n')
-        f.write(str(count_all_sum))
+    create_category_file(questions, questions_by_category)
 
     head = read_template()
     for category, list_question in questions_by_category.items():
