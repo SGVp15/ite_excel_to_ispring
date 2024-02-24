@@ -53,7 +53,7 @@ def create_dict_category_questions(questions: [Question]) -> dict:
     return questions_by_category
 
 
-def create_excel_file_for_ispring(questions: [Question]):
+def create_excel_file_for_import(questions: [Question]):
     questions_by_category = create_dict_category_questions(questions)
     create_category_file(questions, questions_by_category)
 
