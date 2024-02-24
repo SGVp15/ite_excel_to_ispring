@@ -66,13 +66,11 @@ def create_dict_category_questions(questions: [Question]) -> dict:
         for question in questions:
             if question.category == category:
                 questions_in_category.append(question)
-                # TODO replace to def
-                # if q.box_question not in box_questions.keys() or q.box_question is None:
-                #     box_questions[q.box_question] = [q]
-                # else:
-                #     box_questions[q.box_question].append(q)
-        # questions_by_category[category] = box_questions.copy()
-        questions_by_category[category] = questions_in_category.copy()
+                if q.box_question not in box_questions.keys() or q.box_question is None:
+                    box_questions[q.box_question] = [q]
+                else:
+                    box_questions[q.box_question].append(q)
+        questions_by_category[category] = box_questions.copy()
     return questions_by_category
 
 
