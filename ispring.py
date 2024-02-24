@@ -1,4 +1,5 @@
 import os
+import random
 
 import openpyxl
 from Question import Question
@@ -62,14 +63,15 @@ def create_dict_category_questions(questions: [Question]) -> dict:
     questions_by_category = {}
     categories = get_all_category_from_questions(questions)
     for category in categories:
+        box_questions = {}
         questions_in_category = []
         for question in questions:
             if question.category == category:
                 questions_in_category.append(question)
-                if q.box_question not in box_questions.keys() or q.box_question is None:
-                    box_questions[q.box_question] = [q]
+                if question.box_question not in box_questions.keys() or question.box_question is None:
+                    box_questions[question.box_question] = [question]
                 else:
-                    box_questions[q.box_question].append(q)
+                    box_questions[question.box_question].append(question)
         questions_by_category[category] = box_questions.copy()
     return questions_by_category
 
@@ -117,6 +119,9 @@ def create_excel_file_for_import(questions: [Question]):
 
 
 def create_excel_file_for_ispring(questions: [Question]):
+    questions_by_category = create_dict_category_questions(questions)
+    create_category_file(questions, questions_by_category)
+
     categories = []
     for q in questions:
         if q.category not in categories:
@@ -180,9 +185,6 @@ def create_excel_file_for_ispring(questions: [Question]):
             # Save the workbook to a file
             os.makedirs(name=f'./Category/{questions[0].exam}/{group_number}', exist_ok=True)
             workbook.save(f'./Category/{questions[0].exam}/{group_number}/{category[:2]}.xlsx')
-
-
-`
 
 
 def read_template(file=template_ispring):
