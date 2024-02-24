@@ -3,12 +3,12 @@ import random
 
 import openpyxl
 from Question import Question
+from TICKET.ticket import Ticket
 from config import template_ispring, output_dir
 
 
 def get_random_index_list_quest(list_quest, max_group):
     out = []
-    # print([x - 1 for x in list_quest])
     for group in range(0, max_group):
         l = []
         for i, v in enumerate(list_quest):
@@ -27,14 +27,6 @@ def get_random_index_list_quest(list_quest, max_group):
                 l.append(n)
         out.append(l.copy())
     return out
-
-
-def get_all_category_from_questions(questions: list[Question]) -> list[str]:
-    categories = []
-    for q in questions:
-        if q.category not in categories:
-            categories.append(q.category)
-    return sorted(categories)
 
 
 def create_category_file(questions, questions_by_category, count_questions_in_ticket=30):
@@ -59,29 +51,13 @@ def create_category_file(questions, questions_by_category, count_questions_in_ti
             f.write(f'\n{count_all_sum}')
 
 
-def create_dict_category_questions(questions: [Question]) -> dict:
-    questions_by_category = {}
-    categories = get_all_category_from_questions(questions)
-    for category in categories:
-        box_questions = {}
-        questions_in_category = []
-        for question in questions:
-            if question.category == category:
-                questions_in_category.append(question)
-                if question.box_question not in box_questions.keys() or question.box_question is None:
-                    box_questions[question.box_question] = [question]
-                else:
-                    box_questions[question.box_question].append(question)
-        questions_by_category[category] = box_questions.copy()
-    return questions_by_category
-
-
 def create_excel_file_for_import(questions: [Question]):
-    questions_by_category = create_dict_category_questions(questions)
-    create_category_file(questions, questions_by_category)
+    ticket = Ticket(questions)
+    questions_by_category = ticket.get_dict_questions_by_category()
+    create_category_file(ticket.questions, questions_by_category)
 
     head = read_template()
-    for category, list_question in questions_by_category.items():
+    for category, question_list in questions_by_category.items():
         workbook = openpyxl.Workbook()
         worksheet = workbook.active
         for i, v in enumerate(head):
@@ -89,7 +65,7 @@ def create_excel_file_for_import(questions: [Question]):
 
         row = 0
         # Create a list of values to write to the Excel file
-        for q in list_question:
+        for q in question_list:
             row += 1
             values_to_write = ['MC', q.text_question, q.image, '', '',
                                f'*{q.answer_a}', q.answer_b, q.answer_c, q.answer_d,
@@ -103,88 +79,71 @@ def create_excel_file_for_import(questions: [Question]):
         os.makedirs(os.path.join(output_dir, questions[0].exam), exist_ok=True)
         workbook.save(f'{output_dir}/{questions[0].exam}/{category}.xlsx')
 
-        # max_group = 0
-        # for category, list_quest in questions_by_category.items():
-        #     for k, v in list_quest.items():
-        #         max_group = max(max_group, len(v))
-        #
-        # for category, list_quest in questions_by_category.items():
-        #     list_len_group = [len(i) for i in list_quest.values()]
-        #     # index_list_quest = get_random_index_list_quest(list_len_group, max_group)
-        #     for group_number in range(max_group):
-        #         l_quest = []
-        #         l_questions = [v for v in list_quest.values()]
-        #         for i, v in enumerate(index_list_quest[group_number]):
-        #             l_quest.append(l_questions[i][v])
 
-
-def create_excel_file_for_ispring(questions: [Question]):
-    questions_by_category = create_dict_category_questions(questions)
-    create_category_file(questions, questions_by_category)
-
-    categories = []
-    for q in questions:
-        if q.category not in categories:
-            categories.append(q.category)
-    os.makedirs(f'./Category/{questions[0].exam}', exist_ok=True)
-    category_file = f'./Category/{questions[0].exam}/category.txt'
-    with open(category_file, 'w') as f:
-        f.write('')
-
-    with open(category_file, 'a', encoding='utf-8') as f:
-        for category in categories:
-            f.write(category + '\n')
-
-    questions_by_category = {}
-    for category in categories:
-        box_questions = {}
-        for q in questions:
-            if q.category == category:
-                if q.box_question not in box_questions.keys():
-                    box_questions[q.box_question] = [q]
-                else:
-                    box_questions[q.box_question].append(q)
-        questions_by_category[category] = box_questions.copy()
-
-    for category, list_quest in questions_by_category.items():
-        print(f'{category}\t\t{len(list_quest)}')
-
-    head = read_template()
-
-    max_group = 0
-    for category, list_quest in questions_by_category.items():
-        for k, v in list_quest.items():
-            max_group = max(max_group, len(v))
-
-    for category, list_quest in questions_by_category.items():
-        list_len_group = [len(i) for i in list_quest.values()]
-        index_list_quest = get_random_index_list_quest(list_len_group, max_group)
-        for group_number in range(max_group):
-            l_quest = []
-            l_questions = [v for v in list_quest.values()]
-            for i, v in enumerate(index_list_quest[group_number]):
-                l_quest.append(l_questions[i][v])
-
-            workbook = openpyxl.Workbook()
-            worksheet = workbook.active
-            j = 0
-            for i, v in enumerate(head):
-                worksheet.cell(row=1, column=i + 1, value=str(v))
-
-            # Create a list of values to write to the Excel file
-            for q in l_quest:
-                j += 1
-                values_to_write = ['MC', q.text_question, '', '', '',
-                                   f'*{q.ans_a}', q.ans_b, q.ans_c, q.ans_d,
-                                   '', '', '', '', '', '', '', '', 1]
-
-                # Write the numbers to the worksheet
-                for i, v in enumerate(values_to_write):
-                    worksheet.cell(row=j + 1, column=i + 1, value=str(v))
-
-            # Save the workbook to a file
-            os.makedirs(name=f'./Category/{questions[0].exam}/{group_number}', exist_ok=True)
-            workbook.save(f'./Category/{questions[0].exam}/{group_number}/{category[:2]}.xlsx')
+# def create_excel_file_for_ispring(questions: [Question]):
+#     questions_by_category = create_dict_category_questions(questions)
+#     create_category_file(questions, questions_by_category)
+#
+#     categories = []
+#     for q in questions:
+#         if q.category not in categories:
+#             categories.append(q.category)
+#     os.makedirs(f'./{output_dir}/{questions[0].exam}', exist_ok=True)
+#     category_file = f'./{output_dir}/{questions[0].exam}/category.txt'
+#     with open(category_file, 'w', encoding='utf-8') as f:
+#         for category in categories:
+#             f.write(category + '\n')
+#
+#     questions_by_category = {}
+#     for category in categories:
+#         box_questions = {}
+#         for q in questions:
+#             if q.category == category:
+#                 if q.box_question not in box_questions.keys():
+#                     box_questions[q.box_question] = [q]
+#                 else:
+#                     box_questions[q.box_question].append(q)
+#         questions_by_category[category] = box_questions.copy()
+#
+#     # for category, dict_box_quest in questions_by_category.items():
+#     #     print(f'{category}\t\t{len(dict_box_quest)}')
+#
+#     head = read_template()
+#
+#     max_group = 0
+#     for category, dict_box_quest in questions_by_category.items():
+#         for k, v in dict_box_quest.items():
+#             max_group = max(max_group, len(v))
+#
+#     for category, dict_box_quest in questions_by_category.items():
+#         list_len_group = [len(i) for i in dict_box_quest.values()]
+#         index_list_quest = get_random_index_list_quest(list_len_group, max_group)
+#         for group_number in range(max_group):
+#             l_quest = []
+#             l_questions = [v for v in dict_box_quest.values()]
+#             for i, v in enumerate(index_list_quest[group_number]):
+#                 l_quest.append(l_questions[i][v])
+#
+#             workbook = openpyxl.Workbook()
+#             worksheet = workbook.active
+#             j = 0
+#             for i, v in enumerate(head):
+#                 worksheet.cell(row=1, column=i + 1, value=str(v))
+#
+#             # Create a list of values to write to the Excel file
+#             for q in l_quest:
+#                 j += 1
+#                 values_to_write = ['MC', q.text_question, '', '', '',
+#                                    f'*{q.answer_a}', q.answer_b, q.answer_c, q.answer_d,
+#                                    '', '', '', '', '', '', '', '', 1]
+#
+#                 # Write the numbers to the worksheet
+#                 for i, v in enumerate(values_to_write):
+#                     worksheet.cell(row=j + 1, column=i + 1, value=str(v))
+#
+#             # Save the workbook to a file
+#             os.makedirs(name=f'./{output_dir}/{questions[0].exam}/{group_number}', exist_ok=True)
+#             workbook.save(f'./{output_dir}/{questions[0].exam}/{group_number}/{category}.xlsx')
 
 
 def read_template(file=template_ispring):

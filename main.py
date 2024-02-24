@@ -61,3 +61,4 @@ if __name__ == '__main__':
             q.exam = exam_name
         print(exam_name)
         create_excel_file_for_import(questions)
+        # create_excel_file_for_ispring(questions)
