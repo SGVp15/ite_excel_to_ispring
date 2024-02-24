@@ -4,7 +4,7 @@ from Question import Question
 class Ticket:
     def __init__(self, questions):
         self.all_questions = questions
-        self.questions: list(Question) = []
+        self.questions = []
         self.box_question: list = []
         self.questions_by_category = {}
 
