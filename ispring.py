@@ -4,7 +4,7 @@ import random
 import openpyxl
 from Question import Question
 from TICKET.ticket import Ticket
-from config import template_ispring, output_dir
+from config import template_file_for_ispring, output_dir
 
 
 def get_random_index_list_quest(list_quest, max_group):
@@ -146,7 +146,7 @@ def create_excel_file_for_import(questions: [Question]):
 #             workbook.save(f'./{output_dir}/{questions[0].exam}/{group_number}/{category}.xlsx')
 
 
-def read_template(file=template_ispring):
+def read_template(file=template_file_for_ispring):
     if os.path.isfile(file):
         workbook = openpyxl.load_workbook(file)
         page_name = workbook.sheetnames
