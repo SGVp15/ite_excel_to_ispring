@@ -12,7 +12,7 @@ class Ticket:
         self.questions_by_category = {}
         self.questions_by_box = {}
 
-        self.max_len_box = 0
+        self.max_len_box = 1
 
         for question in self.all_questions:
             if question.category not in self.questions_by_category.keys():
