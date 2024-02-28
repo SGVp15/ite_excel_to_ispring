@@ -28,7 +28,7 @@ def create_category_file(questions, questions_by_category, exam_name, num, max_q
             f.write(f'{category}\t\t{count_proc_cat}/{len(list_question)}'
                     f'\n')
         if count_all_sum != max_questions_in_ticket:
-            f.write(f'\n{count_all_sum}\tВсего вопросов:{len(questions)}\t')
+            f.write(f'\n{count_all_sum}\tВсего вопросов:\t{len(questions)}')
         else:
             f.write(f'\n{count_all_sum}')
 
