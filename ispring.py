@@ -1,32 +1,10 @@
 import os
-import random
 
 import openpyxl
+
 from Question import Question
 from TICKET.ticket import Ticket
 from config import template_file_for_ispring, output_dir
-
-
-def get_random_index_list_quest(list_quest, max_group):
-    out = []
-    for group in range(0, max_group):
-        l = []
-        for i, v in enumerate(list_quest):
-            v1 = v - 1
-            if v1 < len(out) or len(out) == 0:
-                l.append(random.randint(0, v1))
-            else:
-                temp_l = []
-                for o in out:
-                    temp_l.append(o[i])
-                n = 0
-                while True:
-                    n = random.randint(0, v1)
-                    if n not in temp_l:
-                        break
-                l.append(n)
-        out.append(l.copy())
-    return out
 
 
 def create_category_file(questions, questions_by_category, exam_name, num, count_questions_in_ticket=30):
