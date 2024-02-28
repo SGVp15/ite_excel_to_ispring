@@ -58,10 +58,6 @@ if __name__ == '__main__':
         print(exam_name)
         questions = get_all_questions_from_excel_file(file)
 
-        for q in questions:
-            q.exam = exam_name
-
-        tickets = create_tickets(questions)
-
-        # create_excel_file_for_import(questions)
-        # create_excel_file_for_ispring(questions)
+        questions_in_ticket = create_tickets(questions)
+        for i, questions_t in enumerate(questions_in_ticket):
+            create_excel_file_for_import(questions_t, exam_name, i)

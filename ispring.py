@@ -29,13 +29,17 @@ def get_random_index_list_quest(list_quest, max_group):
     return out
 
 
-def create_category_file(questions, questions_by_category, count_questions_in_ticket=30):
-    os.makedirs(f'{output_dir}/{questions[0].exam}', exist_ok=True)
+def create_category_file(questions, questions_by_category, exam_name, num, count_questions_in_ticket=30):
+    os.makedirs(f'{output_dir}/{exam_name}/{num}', exist_ok=True)
 
-    info_category_file = f'{output_dir}/{questions[0].exam}/info_ticket_import.txt'
+    info_category_file = f'{output_dir}/{exam_name}/{num}/info_ticket_import.txt'
     with open(info_category_file, 'w', encoding='utf-8') as f:
         count_all_sum = 0
-        for category, list_question in questions_by_category.items():
+
+        categories = sorted(questions_by_category.keys())
+
+        for category in categories:
+            list_question = questions_by_category.get(category)
             count_proc_cat = round(len(list_question) / len(questions) * count_questions_in_ticket)
             if len(list_question) == 1:
                 count_proc_cat = 1
@@ -51,10 +55,10 @@ def create_category_file(questions, questions_by_category, count_questions_in_ti
             f.write(f'\n{count_all_sum}')
 
 
-def create_excel_file_for_import(questions: [Question]):
+def create_excel_file_for_import(questions: [Question], exam_name='', num=0):
     ticket = Ticket(questions)
-    questions_by_category = ticket.get_dict_questions_by_category()
-    create_category_file(ticket.questions, questions_by_category)
+    questions_by_category = ticket.questions_by_category
+    create_category_file(ticket.all_questions, ticket.questions_by_category, exam_name, num)
 
     head = read_template()
     for category, question_list in questions_by_category.items():
@@ -76,8 +80,8 @@ def create_excel_file_for_import(questions: [Question]):
                 worksheet.cell(row=row + 1, column=i + 1, value=str(v))
 
         # Save the workbook to a file
-        os.makedirs(os.path.join(output_dir, questions[0].exam), exist_ok=True)
-        workbook.save(f'{output_dir}/{questions[0].exam}/{category}.xlsx')
+        os.makedirs(os.path.join(output_dir, exam_name, str(num)), exist_ok=True)
+        workbook.save(f'{output_dir}/{exam_name}/{num}/{category}.xlsx')
 
 
 # def create_excel_file_for_ispring(questions: [Question]):
@@ -152,6 +156,7 @@ def create_tickets(questions: [Question]):
     max_box = ticket.get_max_box()
     for i in range(max_box):
         tickets.append(ticket.create_ticket(i))
+    return tickets
 
 
 def read_template(file=template_file_for_ispring):

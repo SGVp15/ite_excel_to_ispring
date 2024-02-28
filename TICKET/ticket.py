@@ -20,10 +20,11 @@ class Ticket:
             else:
                 self.questions_by_category[question.category].append(question)
 
-            if question.box_question not in self.questions_by_box.keys():
-                self.questions_by_box[question.box_question] = [question]
-            else:
-                self.questions_by_box[question.box_question].append(question)
+            if question.box_question is not None:
+                if question.box_question not in self.questions_by_box.keys():
+                    self.questions_by_box[question.box_question] = [question]
+                else:
+                    self.questions_by_box[question.box_question].append(question)
 
             if question.box_question is None:
                 self.questions_without_box.append(question)
