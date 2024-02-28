@@ -146,6 +146,14 @@ def create_excel_file_for_import(questions: [Question]):
 #             workbook.save(f'./{output_dir}/{questions[0].exam}/{group_number}/{category}.xlsx')
 
 
+def create_tickets(questions: [Question]):
+    tickets = []
+    ticket = Ticket(questions)
+    max_box = ticket.get_max_box()
+    for i in range(max_box):
+        tickets.append(ticket.create_ticket(i))
+
+
 def read_template(file=template_file_for_ispring):
     if os.path.isfile(file):
         workbook = openpyxl.load_workbook(file)

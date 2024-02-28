@@ -4,7 +4,7 @@ import random
 
 from Excel.excel_reader import get_all_questions_from_excel_file
 from config import dir_out, input_dir
-from ispring import create_excel_file_for_import
+from ispring import create_excel_file_for_import, create_tickets
 from Question import Question
 
 
@@ -55,10 +55,13 @@ if __name__ == '__main__':
                                                                                                 file)
 
     for exam_name, file in exams.items():
+        print(exam_name)
         questions = get_all_questions_from_excel_file(file)
 
         for q in questions:
             q.exam = exam_name
-        print(exam_name)
-        create_excel_file_for_import(questions)
+
+        tickets = create_tickets(questions)
+
+        # create_excel_file_for_import(questions)
         # create_excel_file_for_ispring(questions)
