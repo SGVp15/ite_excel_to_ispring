@@ -31,39 +31,6 @@ class Ticket:
             else:
                 self.questions_with_box.append(question)
 
-    # def get_dict_questions_by_category(self) -> dict:
-    #     self.questions_by_category = {}
-    #     categories = self.get_all_category_from_questions()
-    #     for category in categories:
-    #         questions_in_category = []
-    #         for question in self.questions:
-    #             if question.category == category:
-    #                 questions_in_category.append(question)
-    #         self.questions_by_category[category] = questions_in_category
-    #     return self.questions_by_category
-    #
-    # def get_dict_questions_by_box(self) -> dict:
-    #     self.questions_by_box = {}
-    #     boxes = self.get_all_box_from_questions()
-    #     for box in boxes:
-    #         questions_in_box = []
-    #         for question in self.questions_with_box:
-    #             if question.box_question == box:
-    #                 questions_in_box.append(question)
-    #         self.questions_by_box[box] = questions_in_box
-    #     return self.questions_by_box
-    #
-    # def get_all_category_from_questions(self) -> list[str]:
-    #
-    #     return sorted(categories)
-    #
-    # def get_all_box_from_questions(self) -> list[str]:
-    #     boxes = []
-    #     for q in self.questions_with_box:
-    #         if q.box_question not in boxes:
-    #             boxes.append(q.box_question)
-    #     return sorted(boxes)
-
     def get_max_box(self):
         for k, v in self.questions_by_box.items():
             if self.max_len_box < len(v):
