@@ -7,7 +7,7 @@ from TICKET.ticket import Ticket
 from config import template_file_for_ispring, output_dir
 
 
-def create_category_file(questions, questions_by_category, exam_name, num, count_questions_in_ticket=30):
+def create_category_file(questions, questions_by_category, exam_name, num, max_questions_in_ticket=30):
     os.makedirs(f'{output_dir}/{exam_name}/{num}', exist_ok=True)
 
     info_category_file = f'{output_dir}/{exam_name}/{num}/info_ticket_import.txt'
@@ -18,16 +18,16 @@ def create_category_file(questions, questions_by_category, exam_name, num, count
 
         for category in categories:
             list_question = questions_by_category.get(category)
-            count_proc_cat = round(len(list_question) / len(questions) * count_questions_in_ticket)
+            count_proc_cat = round(len(list_question) / len(questions) * max_questions_in_ticket)
             if len(list_question) == 1:
                 count_proc_cat = 1
-            proc = len(list_question) / len(questions) * count_questions_in_ticket
+            proc = len(list_question) / len(questions) * max_questions_in_ticket
             if proc > len(list_question):
                 count_proc_cat = len(list_question)
             count_all_sum += count_proc_cat
             f.write(f'{category}\t\t{count_proc_cat}/{len(list_question)}'
                     f'\n')
-        if count_all_sum != count_questions_in_ticket:
+        if count_all_sum != max_questions_in_ticket:
             f.write(f'\n{count_all_sum}\tВсего вопросов:{len(questions)}\t')
         else:
             f.write(f'\n{count_all_sum}')
@@ -36,7 +36,8 @@ def create_category_file(questions, questions_by_category, exam_name, num, count
 def create_excel_file_for_import(questions: [Question], exam_name='', num=0):
     ticket = Ticket(questions)
     questions_by_category = ticket.questions_by_category
-    create_category_file(ticket.all_questions, ticket.questions_by_category, exam_name, num)
+    create_category_file(ticket.all_questions, ticket.questions_by_category, exam_name, num,
+                         max_questions_in_ticket=30)
 
     head = read_template()
     for category, question_list in questions_by_category.items():
