@@ -74,9 +74,7 @@ class Ticket:
         questions.extend(self.questions_without_box)
 
         for k, v in self.questions_by_box.items():
-            if len(v) != 0:
-                len_box = num % len(v)
-                questions.append(v[len_box])
-            else:
-                questions.append(v[0])
+            len_box = num % len(v)
+            questions.append(v[len_box])
+
         return questions
