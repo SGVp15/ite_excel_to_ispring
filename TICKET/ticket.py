@@ -63,6 +63,7 @@ class Ticket:
     #             boxes.append(q.box_question)
     #     return sorted(boxes)
 
+
     def get_max_box(self):
         for k, v in self.questions_by_box.items():
             if self.max_len_box < len(v):
