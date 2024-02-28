@@ -33,11 +33,11 @@ def create_category_file(questions, questions_by_category, exam_name, num, max_q
             f.write(f'\n{count_all_sum}')
 
 
-def create_excel_file_for_import(questions: [Question], exam_name='', num=0):
+def create_excel_file_for_import(questions: [Question], exam_name='', num_box=0, max_questions_in_ticket=30):
     ticket = Ticket(questions)
     questions_by_category = ticket.questions_by_category
-    create_category_file(ticket.all_questions, ticket.questions_by_category, exam_name, num,
-                         max_questions_in_ticket=30)
+    create_category_file(ticket.all_questions, ticket.questions_by_category, exam_name, num_box,
+                         max_questions_in_ticket=max_questions_in_ticket)
 
     head = read_template()
     for category, question_list in questions_by_category.items():
@@ -59,8 +59,8 @@ def create_excel_file_for_import(questions: [Question], exam_name='', num=0):
                 worksheet.cell(row=row + 1, column=i + 1, value=str(v))
 
         # Save the workbook to a file
-        os.makedirs(os.path.join(output_dir, exam_name, str(num)), exist_ok=True)
-        workbook.save(f'{output_dir}/{exam_name}/{num}/{category}.xlsx')
+        os.makedirs(os.path.join(output_dir, exam_name, str(num_box)), exist_ok=True)
+        workbook.save(f'{output_dir}/{exam_name}/{num_box}/{category}.xlsx')
 
 
 def create_tickets(questions: [Question]):

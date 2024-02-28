@@ -16,4 +16,7 @@ if __name__ == '__main__':
 
         questions_in_ticket = create_tickets(questions)
         for i, questions_t in enumerate(questions_in_ticket):
-            create_excel_file_for_import(questions_t, exam_name, i)
+            create_excel_file_for_import(
+                questions=questions_t, exam_name=exam_name, num_box=i,
+                max_questions_in_ticket=30
+            )
