@@ -31,9 +31,9 @@ class Ticket:
             else:
                 self.questions_with_box.append(question)
 
-    def get_max_box(self):
+    def get_max_len_box(self):
         for k, v in self.questions_by_box.items():
-            if self.max_len_box < len(v):
+            if len(v) > self.max_len_box:
                 self.max_len_box = len(v)
         return self.max_len_box
 

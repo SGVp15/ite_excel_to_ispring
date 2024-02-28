@@ -65,7 +65,7 @@ def create_excel_file_for_import(questions: [Question], exam_name='', num=0):
 def create_tickets(questions: [Question]):
     tickets = []
     ticket = Ticket(questions)
-    max_box = ticket.get_max_box()
+    max_box = ticket.get_max_len_box()
     for i in range(max_box):
         tickets.append(ticket.create_ticket(i))
     return tickets
