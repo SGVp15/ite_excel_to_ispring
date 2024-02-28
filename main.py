@@ -50,9 +50,9 @@ def get_from_json(path: str) -> dict:
 
 if __name__ == '__main__':
     exams = {}
-    for file in os.listdir(input_dir):
-        exams[os.path.basename(os.path.join(os.getcwd(), input_dir, file))[:-5]] = os.path.join(os.getcwd(), input_dir,
-                                                                                                file)
+    files_xlsx = [x for x in os.listdir(input_dir) if x.endswith('xlsx')]
+    for file in files_xlsx:
+        exams[file[:-5]] = os.path.join(input_dir, file)
 
     for exam_name, file in exams.items():
         print(exam_name)
