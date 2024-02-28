@@ -60,7 +60,7 @@ def create_excel_file_for_import(questions: [Question], exam_name='', num_box=0,
 
         # Save the workbook to a file
         os.makedirs(os.path.join(output_dir, exam_name, str(num_box)), exist_ok=True)
-        workbook.save(f'{output_dir}/{exam_name}/{num_box}/{category}.xlsx')
+        workbook.save(f'{output_dir}/{exam_name}/{num_box}/{category[:2]}.xlsx')
 
 
 def create_tickets(questions: [Question]):
