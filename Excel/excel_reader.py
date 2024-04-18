@@ -68,6 +68,7 @@ def get_all_questions_from_excel_file(file: str) -> [Question]:
             num_q += 1
             q.category = read_excel(wb, page_name, column_category_question, i)
             all_questions.append(q)
+            # print(i,len(all_questions))
         i += 3
 
     return all_questions
