@@ -46,21 +46,22 @@ def get_all_questions_from_excel_file(file: str) -> [Question]:
         enable_question = read_excel(wb, page_name, column_enable_question, i)
         if enable_question in ('1', 1):
             q = Question()
-
+            q.text_question = read_excel(wb, page_name, column_main, i)
             q.id_question = read_excel(wb, page_name, column_id_question, i)
             q.box_question = read_excel(wb, page_name, column_box_question, i)
 
             image_pattern = r'\s*\[(.*)\]\s*'
-            if re.search(image_pattern, q.box_question):
-                q.image = re.findall(pattern=image_pattern, string=q.box_question)[0]
-                q.image = q.image.strip()
+            if re.search(image_pattern, q.text_question):
+
+                q.image = re.findall(pattern=image_pattern, string=q.text_question)[0]
+                q.image = os.path.join(os.path.dirname(file), q.image.strip())
+                q.text_question = re.sub(image_pattern, '', q.text_question)
             else:
                 q.image = ''
 
             if q.box_question == 'None':
                 q.box_question = None
 
-            q.text_question = read_excel(wb, page_name, column_main, i)
             q.answer_a = read_excel(wb, page_name, column_main, i + 1)
             q.answer_b = read_excel(wb, page_name, column_main, i + 2)
             q.answer_c = read_excel(wb, page_name, column_main, i + 3)

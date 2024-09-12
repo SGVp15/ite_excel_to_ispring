@@ -4,13 +4,13 @@ import openpyxl
 
 from Question import Question
 from TICKET.ticket import Ticket
-from config import template_file_for_ispring, output_dir
+from config import template_file_for_ispring, OUTPUT_DIR
 
 
 def create_category_file(questions, questions_by_category, exam_name, num, max_questions_in_ticket=30):
-    os.makedirs(os.path.join(str(output_dir), str(exam_name), str(num)), exist_ok=True)
+    os.makedirs(os.path.join(str(OUTPUT_DIR), str(exam_name), str(num)), exist_ok=True)
 
-    info_category_file = os.path.join(str(output_dir), str(exam_name), str(num), 'info_ticket_import.txt')
+    info_category_file = os.path.join(str(OUTPUT_DIR), str(exam_name), str(num), 'info_ticket_import.txt')
     with open(info_category_file, 'w', encoding='utf-8') as f:
         count_all_sum = 0
 
@@ -25,8 +25,7 @@ def create_category_file(questions, questions_by_category, exam_name, num, max_q
             if proc > len(list_question):
                 count_proc_cat = len(list_question)
             count_all_sum += count_proc_cat
-            f.write(f'{category}\t\t{count_proc_cat}/{len(list_question)}'
-                    f'\n')
+            f.write(f'{category}\t\t{count_proc_cat}/{len(list_question)}\n')
         if count_all_sum != max_questions_in_ticket:
             f.write(f'\n{count_all_sum}\tВсего вопросов:\t{len(questions)}')
         else:
@@ -59,8 +58,8 @@ def create_excel_file_for_import(questions: [Question], exam_name='', num_box=0,
                 worksheet.cell(row=row + 1, column=i + 1, value=str(v))
 
         # Save the workbook to a file
-        os.makedirs(os.path.join(str(output_dir), str(exam_name), str(num_box)), exist_ok=True)
-        workbook.save(f'{output_dir}/{exam_name}/{num_box}/{category[:2]}.xlsx')
+        os.makedirs(os.path.join(str(OUTPUT_DIR), str(exam_name), str(num_box)), exist_ok=True)
+        workbook.save(f'{OUTPUT_DIR}/{exam_name}/{num_box}/{category[:2]}.xlsx')
 
 
 def create_tickets(questions: [Question]):
