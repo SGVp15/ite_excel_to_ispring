@@ -8,6 +8,5 @@ template_file_for_ispring = './template_ispring.xlsx'
 INPUT_DIR = './input'
 os.makedirs(INPUT_DIR, exist_ok=True)
 
-# output_dir = '//192.168.20.100/личные документы/Савушкин/ispring'
 OUTPUT_DIR = 'C:/Users/user/Documents/Exams'
 os.makedirs(OUTPUT_DIR, exist_ok=True)
