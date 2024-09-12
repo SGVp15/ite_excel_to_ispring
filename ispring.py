@@ -8,9 +8,9 @@ from config import template_file_for_ispring, output_dir
 
 
 def create_category_file(questions, questions_by_category, exam_name, num, max_questions_in_ticket=30):
-    os.makedirs(os.path.join(output_dir, exam_name, num), exist_ok=True)
+    os.makedirs(os.path.join(str(output_dir), str(exam_name), str(num)), exist_ok=True)
 
-    info_category_file = os.path.join(output_dir, exam_name, num, 'info_ticket_import.txt')
+    info_category_file = os.path.join(str(output_dir), str(exam_name), str(num), 'info_ticket_import.txt')
     with open(info_category_file, 'w', encoding='utf-8') as f:
         count_all_sum = 0
 
@@ -59,7 +59,7 @@ def create_excel_file_for_import(questions: [Question], exam_name='', num_box=0,
                 worksheet.cell(row=row + 1, column=i + 1, value=str(v))
 
         # Save the workbook to a file
-        os.makedirs(os.path.join(output_dir, exam_name, str(num_box)), exist_ok=True)
+        os.makedirs(os.path.join(str(output_dir), str(exam_name), str(num_box)), exist_ok=True)
         workbook.save(f'{output_dir}/{exam_name}/{num_box}/{category[:2]}.xlsx')
 
 

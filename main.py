@@ -10,7 +10,7 @@ if __name__ == '__main__':
     files_xlsx = [x for x in os.listdir(input_dir) if x.endswith('xlsx')]
     for file in files_xlsx:
         exam_name = re.sub(r'.xlsx$', '', file)
-        exams_name_path[exam_name] = os.path.join(input_dir, file)
+        exams_name_path[exam_name] = os.path.join(str(input_dir), str(file))
 
     for exam_name, file in exams_name_path.items():
         print(exam_name)
