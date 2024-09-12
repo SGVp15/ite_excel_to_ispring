@@ -1,4 +1,5 @@
 import os
+import shutil
 
 import openpyxl
 
@@ -32,7 +33,7 @@ def create_category_file(questions, questions_by_category, exam_name, num, max_q
             f.write(f'\n{count_all_sum}')
 
 
-def create_excel_file_for_import(questions: [Question], exam_name='', num_box=0, max_questions_in_ticket=30):
+def create_excel_file_for_ispring(questions: [Question], exam_name: str, num_box=0, max_questions_in_ticket=30):
     ticket = Ticket(questions)
     questions_by_category = ticket.questions_by_category
     create_category_file(ticket.all_questions, ticket.questions_by_category, exam_name, num_box,
@@ -49,7 +50,7 @@ def create_excel_file_for_import(questions: [Question], exam_name='', num_box=0,
         # Create a list of values to write to the Excel file
         for q in question_list:
             row += 1
-            values_to_write = ['MC', q.text_question, q.image, '', '',
+            values_to_write = ['MC', q.text_question, os.path.basename(q.image), '', '',
                                f'*{q.answer_a}', q.answer_b, q.answer_c, q.answer_d,
                                '', '', '', '', '', '', '', '', 1]
 
@@ -58,8 +59,12 @@ def create_excel_file_for_import(questions: [Question], exam_name='', num_box=0,
                 worksheet.cell(row=row + 1, column=i + 1, value=str(v))
 
         # Save the workbook to a file
-        os.makedirs(os.path.join(str(OUTPUT_DIR), str(exam_name), str(num_box)), exist_ok=True)
-        workbook.save(f'{OUTPUT_DIR}/{exam_name}/{num_box}/{category[:2]}.xlsx')
+        dir = os.path.join(str(OUTPUT_DIR), str(exam_name), str(num_box))
+        os.makedirs(dir, exist_ok=True)
+        workbook.save(f'{dir}/{category[:2]}.xlsx')
+    for q in questions:
+        if q.image != '':
+            shutil.copyfile(q.image, os.path.join(dir, os.path.basename(q.image)))
 
 
 def create_tickets(questions: [Question]):

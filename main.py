@@ -4,7 +4,7 @@ import re
 from Excel.excel_reader import get_all_questions_from_excel_file
 from Question import Question
 from config import INPUT_DIR
-from ispring import create_excel_file_for_import, create_tickets
+from ispring import create_excel_file_for_ispring, create_tickets
 
 
 def check_images_in_folder(questions: [Question]):
@@ -30,18 +30,20 @@ if __name__ == '__main__':
     files_xlsx = get_all_excel_files(INPUT_DIR, '.xlsx')
 
     for file in files_xlsx:
-        exam_name = re.sub(r'.xlsx$', '', file)
+        exam_name = re.sub(r'.xlsx$', '', os.path.basename(file))
         exams_name_path[exam_name] = file
 
     for exam_name, file in exams_name_path.items():
-        print(exam_name)
+        print(f'{exam_name}:', end='')
         questions: [Question] = get_all_questions_from_excel_file(file)
         folder = os.path.dirname(file)
         check_images_in_folder(questions)
 
         questions_in_ticket = create_tickets(questions)
         for i, questions_t in enumerate(questions_in_ticket):
-            create_excel_file_for_import(
+            create_excel_file_for_ispring(
                 questions=questions_t, exam_name=exam_name, num_box=i,
                 max_questions_in_ticket=30
             )
+
+        print('OK')
