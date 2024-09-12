@@ -50,7 +50,7 @@ def get_all_questions_from_excel_file(file: str) -> [Question]:
             q.id_question = read_excel(wb, page_name, column_id_question, i)
             q.box_question = read_excel(wb, page_name, column_box_question, i)
 
-            image_pattern = r'\s*\[(.*)\]\s*'
+            image_pattern = r'\s*\[([A-Яа-я\w]+\.\w+)\]\s*'
             if re.search(image_pattern, q.text_question):
 
                 q.image = re.findall(pattern=image_pattern, string=q.text_question)[0]
