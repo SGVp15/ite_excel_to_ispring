@@ -90,4 +90,6 @@ def read_excel(excel, page_name, column, row):
     if v is None:
         return None
     value = str(v).strip()
+    if value == '':
+        return None
     return value
