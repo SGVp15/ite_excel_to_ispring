@@ -42,7 +42,7 @@ def get_all_questions_from_excel_file(file: str) -> [Question]:
         d = read_excel(wb, page_name, column_a, i + 4).lower()
 
         if b not in ('b', 'в') or c not in ('c', 'с') or d != 'd':
-            print(f'[ERROR] row : {i}, {file=}')
+            print(f'[Error] row : {i}, {file=}')
             continue
 
         is_enable_question = read_excel(wb, page_name, column_enable_question, i)
