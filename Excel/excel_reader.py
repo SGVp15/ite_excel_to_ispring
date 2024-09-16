@@ -47,6 +47,8 @@ def get_all_questions_from_excel_file(file: str) -> [Question]:
         if enable_question in ('1', 1):
             q = Question()
             q.text_question = read_excel(wb, page_name, column_main, i)
+            if q.text_question in ('', None):
+                continue
             q.id_question = read_excel(wb, page_name, column_id_question, i)
             q.box_question = read_excel(wb, page_name, column_box_question, i)
 
@@ -66,6 +68,9 @@ def get_all_questions_from_excel_file(file: str) -> [Question]:
             q.answer_b = read_excel(wb, page_name, column_main, i + 2)
             q.answer_c = read_excel(wb, page_name, column_main, i + 3)
             q.answer_d = read_excel(wb, page_name, column_main, i + 4)
+            if (q.answer_a in ('', None) or q.answer_b in ('', None) or q.answer_c in ('', None) or
+                    q.answer_d in ('', None)):
+                continue
             num_q += 1
             q.category = read_excel(wb, page_name, column_category_question, i)
             all_questions.append(q)
