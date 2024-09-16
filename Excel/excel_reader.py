@@ -36,16 +36,17 @@ def get_all_questions_from_excel_file(file: str) -> [Question]:
 
         if a not in ('a', 'а', 'A', 'А'):
             continue
-        a = a.lower()
+
         b = read_excel(wb, page_name, column_a, i + 2).lower()
         c = read_excel(wb, page_name, column_a, i + 3).lower()
         d = read_excel(wb, page_name, column_a, i + 4).lower()
 
         if b not in ('b', 'в') or c not in ('c', 'с') or d != 'd':
+            print(f'[ERROR] row : {i}, {file=}')
             continue
 
-        enable_question = read_excel(wb, page_name, column_enable_question, i)
-        if enable_question in ('1', 1):
+        is_enable_question = read_excel(wb, page_name, column_enable_question, i)
+        if is_enable_question in ('1', 1):
             q = Question()
             q.text_question = read_excel(wb, page_name, column_main, i)
             if q.text_question in ('', None):
@@ -55,28 +56,23 @@ def get_all_questions_from_excel_file(file: str) -> [Question]:
 
             image_pattern = r'\s*\[([A-Яа-я\w]+\.\w+)\]\s*'
             if re.search(image_pattern, q.text_question):
-
                 q.image = re.findall(pattern=image_pattern, string=q.text_question)[0]
                 q.image = os.path.join(os.path.dirname(file), q.image.strip())
                 q.text_question = re.sub(image_pattern, '', q.text_question)
             else:
                 q.image = ''
 
-            if q.box_question == 'None':
-                q.box_question = None
-
             q.answer_a = read_excel(wb, page_name, column_main, i + 1)
             q.answer_b = read_excel(wb, page_name, column_main, i + 2)
             q.answer_c = read_excel(wb, page_name, column_main, i + 3)
             q.answer_d = read_excel(wb, page_name, column_main, i + 4)
-            if (q.answer_a in ('', None) or q.answer_b in ('', None) or q.answer_c in ('', None) or
-                    q.answer_d in ('', None)):
+            if None in (q.answer_a, q.answer_b, q.answer_c, q.answer_d):
                 continue
             num_q += 1
             q.category = read_excel(wb, page_name, column_category_question, i)
 
             all_questions.append(q)
-            # print(i,len(all_questions))
+            print(f'{q}\n')
         i += 4
 
     return all_questions
