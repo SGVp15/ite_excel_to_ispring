@@ -32,10 +32,11 @@ def get_all_questions_from_excel_file(file: str) -> [Question]:
     max_row = wb[page_name].max_row
     while i <= max_row:
         i += 1
-        a = read_excel(wb, page_name, column_a, i + 1).lower()
-        if a not in ('a', 'а'):
-            continue
+        a = read_excel(wb, page_name, column_a, i + 1)
 
+        if a not in ('a', 'а', 'A', 'А'):
+            continue
+        a = a.lower()
         b = read_excel(wb, page_name, column_a, i + 2).lower()
         c = read_excel(wb, page_name, column_a, i + 3).lower()
         d = read_excel(wb, page_name, column_a, i + 4).lower()
@@ -73,6 +74,7 @@ def get_all_questions_from_excel_file(file: str) -> [Question]:
                 continue
             num_q += 1
             q.category = read_excel(wb, page_name, column_category_question, i)
+
             all_questions.append(q)
             # print(i,len(all_questions))
         i += 4
@@ -88,5 +90,8 @@ def save_json_questions(path_questions, all_questions):
 
 def read_excel(excel, page_name, column, row):
     sheet_ranges = excel[page_name]
+    v = sheet_ranges[f'{column}{row}'].value
+    if v is None:
+        return None
     value = str(sheet_ranges[f'{column}{row}'].value).strip()
     return value
