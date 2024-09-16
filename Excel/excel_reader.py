@@ -93,5 +93,5 @@ def read_excel(excel, page_name, column, row):
     v = sheet_ranges[f'{column}{row}'].value
     if v is None:
         return None
-    value = str(sheet_ranges[f'{column}{row}'].value).strip()
+    value = str(v).strip()
     return value

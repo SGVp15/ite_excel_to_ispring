@@ -10,3 +10,11 @@ class Question:
         self.box_question: int
         self.category: str = ''
         self.exam: str = ''
+
+    def __str__(self):
+        return (f'{self.text_question}\t'
+                f'{self.answer_a}\t'''
+                f'{self.answer_b}\t'''
+                f'{self.answer_c}\t'''
+                f'{self.answer_d}\t'''
+                f'{self.image}\t')
