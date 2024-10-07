@@ -14,7 +14,6 @@ def create_category_file(questions, questions_by_category, exam_name, num, max_q
     info_category_file = os.path.join(str(OUTPUT_DIR), str(exam_name), str(num), 'info_ticket_import.txt')
     with open(info_category_file, 'w', encoding='utf-8') as f:
         count_all_sum = 0
-
         categories = sorted(questions_by_category.keys())
 
         for category in categories:
