@@ -15,19 +15,19 @@ def check_images_in_folder(questions: [Question]):
             raise FileNotFoundError(file)
 
 
-def get_all_excel_files(dir, pattertn):
-    files_xlsx = []
-    for root, dirs, files in os.walk(INPUT_DIR):
+def get_all_excel_files(folder_input: str, pattern: str):
+    file_list = []
+    for root, dirs, files in os.walk(folder_input):
         for name in files:
-            if name.endswith(pattertn):
-                files_xlsx.append(os.path.join(root, name))
-    return files_xlsx
+            if name.endswith(pattern):
+                file_list.append(os.path.join(root, name))
+    return file_list
 
 
 if __name__ == '__main__':
     exams_name_path = {}
 
-    files_xlsx = get_all_excel_files(INPUT_DIR, '.xlsx')
+    files_xlsx: [None | str] = get_all_excel_files(INPUT_DIR, '.xlsx')
 
     for file in files_xlsx:
         exam_name = re.sub(r'.xlsx$', '', os.path.basename(file))
