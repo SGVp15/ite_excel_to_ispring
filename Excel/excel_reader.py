@@ -9,7 +9,7 @@ from Question import Question
 
 
 def get_all_questions_from_excel_file(file: str) -> [Question]:
-    wb = openpyxl.load_workbook(filename=f'{file}', data_only=True, read_only=True)
+    wb = openpyxl.load_workbook(filename=f'{file}', data_only=True)
     page_name = wb.sheetnames
     page_name = str(page_name[0])
 
@@ -54,6 +54,7 @@ def get_all_questions_from_excel_file(file: str) -> [Question]:
                 continue
             q.id_question = read_excel(wb, page_name, column_id_question, i)
             q.box_question = read_excel(wb, page_name, column_box_question, i)
+
             image = read_excel(wb, page_name, column_image, i)
             if image is not None:
                 image_pattern = r'\s*([A-Яа-я\w\d _\-]+\.\w+)\s*'
