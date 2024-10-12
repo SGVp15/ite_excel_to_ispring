@@ -8,7 +8,7 @@ from TICKET.ticket import Ticket
 from config import template_file_for_ispring, OUTPUT_DIR
 
 
-def create_category_file(questions, questions_by_category, exam_name, num, max_questions_in_ticket=30):
+def create_txt_file_category(questions, questions_by_category, exam_name, num, max_questions_in_ticket=30):
     os.makedirs(os.path.join(str(OUTPUT_DIR), str(exam_name), str(num)), exist_ok=True)
 
     info_category_file = os.path.join(str(OUTPUT_DIR), str(exam_name), str(num), 'info_ticket_import.txt')
@@ -25,9 +25,9 @@ def create_category_file(questions, questions_by_category, exam_name, num, max_q
             if proc > len(list_question):
                 count_proc_cat = len(list_question)
             count_all_sum += count_proc_cat
-            f.write(f'{category}\t\t{count_proc_cat}/{len(list_question)}\n')
+            f.write(f'{category}\t{count_proc_cat}\t{len(list_question)}\n')
         if count_all_sum != max_questions_in_ticket:
-            f.write(f'\n{count_all_sum}\tВсего вопросов:\t{len(questions)}')
+            f.write(f'\n{count_all_sum} Всего вопросов: {len(questions)}')
         else:
             f.write(f'\n{count_all_sum}')
 
@@ -35,8 +35,8 @@ def create_category_file(questions, questions_by_category, exam_name, num, max_q
 def create_excel_file_for_ispring(questions: [Question], exam_name: str, num_box=0, max_questions_in_ticket=30):
     ticket = Ticket(questions)
     questions_by_category = ticket.questions_by_category
-    create_category_file(ticket.all_questions, ticket.questions_by_category, exam_name, num_box,
-                         max_questions_in_ticket=max_questions_in_ticket)
+    create_txt_file_category(ticket.all_questions, ticket.questions_by_category, exam_name, num_box,
+                             max_questions_in_ticket=max_questions_in_ticket)
 
     head = read_template()
     for category, question_list in questions_by_category.items():
