@@ -12,7 +12,7 @@ def check_images_in_folder(questions: [Question]):
     for q in questions_with_images:
         file = q.image
         if not os.path.exists(str(file)):
-            raise FileNotFoundError(file)
+            raise FileNotFoundError(f'[{file}]')
 
 
 def get_all_excel_files(folder_input: str, pattern: str):
