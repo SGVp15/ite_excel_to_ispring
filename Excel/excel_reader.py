@@ -9,18 +9,19 @@ from Question import Question
 
 
 def get_all_questions_from_excel_file(file: str) -> [Question]:
-    wb = openpyxl.load_workbook(filename=f'{file}', data_only=True)
+    wb = openpyxl.load_workbook(filename=f'{file}', data_only=True, read_only=True)
     page_name = wb.sheetnames
     page_name = str(page_name[0])
 
     map_excel = {}
     max_column = wb[page_name].max_column
-    for col in range(1, max_column):
+    for col in range(1, max_column + 1):
         map_excel[read_excel(wb, page_name, get_column_letter(col), 1)] = get_column_letter(col)
     column_id_question = map_excel['Код вопроса']
     column_category_question = map_excel['Раздел курса']
     column_box_question = map_excel['Блок вопросов']
     column_enable_question = map_excel.get('Действующий 1-да, 0-нет', 'L')
+    column_image = map_excel.get('Рисунок', 'C')
 
     column_a = 'a'
     column_main = 'b'
@@ -53,14 +54,15 @@ def get_all_questions_from_excel_file(file: str) -> [Question]:
                 continue
             q.id_question = read_excel(wb, page_name, column_id_question, i)
             q.box_question = read_excel(wb, page_name, column_box_question, i)
+            q.image = read_excel(wb, page_name, column_image, i)
 
-            image_pattern = r'\s*\[([A-Яа-я\w _\-]+\.\w+)\]\s*'
-            if re.search(image_pattern, q.text_question):
-                q.image = re.findall(pattern=image_pattern, string=q.text_question)[0]
-                q.image = os.path.join(os.path.dirname(file), q.image.strip())
-                q.text_question = re.sub(image_pattern, '', q.text_question)
-            else:
-                q.image = ''
+            # image_pattern = r'\s*\[([A-Яа-я\w _\-]+\.\w+)\]\s*'
+            # if re.search(image_pattern, q.text_question):
+            #     q.image = re.findall(pattern=image_pattern, string=q.text_question)[0]
+            #     q.image = os.path.join(os.path.dirname(file), q.image.strip())
+            #     q.text_question = re.sub(image_pattern, '', q.text_question)
+            # else:
+            #     q.image = ''
 
             q.answer_a = read_excel(wb, page_name, column_main, i + 1)
             q.answer_b = read_excel(wb, page_name, column_main, i + 2)
