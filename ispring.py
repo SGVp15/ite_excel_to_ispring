@@ -1,11 +1,13 @@
 import os
 import shutil
+from copy import deepcopy
 
 import openpyxl
 
 from Question import Question
 from TICKET.ticket import Ticket
 from config import template_file_for_ispring, OUTPUT_DIR
+from list_utils import compress
 
 
 def create_txt_file_category(questions, questions_by_category, exam_name, num, max_questions_in_ticket=30):
@@ -16,20 +18,27 @@ def create_txt_file_category(questions, questions_by_category, exam_name, num, m
         count_all_sum = 0
         categories = sorted(questions_by_category.keys())
 
-        for category in categories:
-            list_question = questions_by_category.get(category)
-            count_proc_cat = round(len(list_question) / len(questions) * max_questions_in_ticket)
-            if len(list_question) == 1:
-                count_proc_cat = 1
-            proc = len(list_question) / len(questions) * max_questions_in_ticket
-            if proc > len(list_question):
-                count_proc_cat = len(list_question)
-            count_all_sum += count_proc_cat
-            f.write(f'{category}\t{count_proc_cat}\t{len(list_question)}\n')
-        if count_all_sum != max_questions_in_ticket:
+        list_max = [len(questions_by_category.get(category)) for category in categories]
+        list_a = deepcopy(list_max)
+        list_a, list_max = compress(list_a, list_max, max_questions_in_ticket)
+        # for i, category in enumerate(categories):
+        #     list_question = questions_by_category.get(category)
+        #     count_proc_cat = round(len(list_question) / len(questions) * max_questions_in_ticket)
+        #     if len(list_question) == 1:
+        #         count_proc_cat = 1
+        #     proc = len(list_question) / len(questions) * max_questions_in_ticket
+        #     if proc > len(list_question):
+        #         count_proc_cat = len(list_question)
+        #     count_all_sum += count_proc_cat
+
+        list_a, list_max = compress(list_a, list_max, max_questions_in_ticket)
+        for i, category in enumerate(categories):
+            f.write(f'{category}\t{list_a[i]}\t{list_max[i]}\n')
+            print(f'{category}\t{list_a[i]}\t{list_max[i]}')
+        if sum(list_max) < max_questions_in_ticket:
             f.write(f'\n{count_all_sum} Всего вопросов: {len(questions)}')
         else:
-            f.write(f'\n{count_all_sum}')
+            f.write(f'\n{len(questions)}')
 
 
 def create_excel_file_for_ispring(questions: [Question], exam_name: str, num_box=0, max_questions_in_ticket=30):

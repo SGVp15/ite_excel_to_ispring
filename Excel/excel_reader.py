@@ -64,14 +64,6 @@ def get_all_questions_from_excel_file(file: str) -> [Question]:
             else:
                 q.image = ''
 
-            # image_pattern = r'\s*\[([A-Яа-я\w _\-]+\.\w+)\]\s*'
-            # if re.search(image_pattern, q.text_question):
-            #     q.image = re.findall(pattern=image_pattern, string=q.text_question)[0]
-            #     q.image = os.path.join(os.path.dirname(file), q.image.strip())
-            #     q.text_question = re.sub(image_pattern, '', q.text_question)
-            # else:
-            #     q.image = ''
-
             q.answer_a = read_excel(wb, page_name, column_main, i + 1)
             q.answer_b = read_excel(wb, page_name, column_main, i + 2)
             q.answer_c = read_excel(wb, page_name, column_main, i + 3)
@@ -82,7 +74,6 @@ def get_all_questions_from_excel_file(file: str) -> [Question]:
             q.category = read_excel(wb, page_name, column_category_question, i)
 
             all_questions.append(q)
-            # print(f'{q}\n')
         i += 4
 
     return all_questions
