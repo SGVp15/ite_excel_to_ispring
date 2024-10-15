@@ -26,6 +26,6 @@ def _get_list_dict(list_a: list, list_max: list):
             'index': i,
             'value': list_a[i],
             'max_value': list_max[i],
-            'proc': (list_a[i] - 1) / list_max[i]  # * list_a[i],
+            'proc': (list_a[i] - 2) / list_max[i],
         })
     return data

@@ -34,11 +34,12 @@ def create_txt_file_category(questions, questions_by_category, exam_name, num, m
         list_a, list_max = compress(list_a, list_max, max_questions_in_ticket)
         for i, category in enumerate(categories):
             f.write(f'{category}\t{list_a[i]}\t{list_max[i]}\n')
-            print(f'{category}\t{list_a[i]}\t{list_max[i]}')
+            print(f'\t{list_a[i]}\t{list_max[i]}\t{list_a[i] / list_max[i]}')
         if sum(list_max) < max_questions_in_ticket:
             f.write(f'\n{count_all_sum} Всего вопросов: {len(questions)}')
         else:
             f.write(f'\n{len(questions)}')
+    print('\n')
 
 
 def create_excel_file_for_ispring(questions: [Question], exam_name: str, num_box=0, max_questions_in_ticket=30):
