@@ -5,7 +5,7 @@ from copy import deepcopy
 import openpyxl
 
 from Question import Question
-from TICKET.ticket import Ticket
+from Ticket.ticket import Ticket
 from config import template_file_for_ispring, OUTPUT_DIR
 from list_utils import compress
 
