@@ -26,7 +26,6 @@ if __name__ == '__main__':
     for exam_name, file in exams_name_path.items():
         print(f'{exam_name}:', end='')
         questions: [Question] = get_all_questions_from_excel_file(file)
-        folder = os.path.dirname(file)
         check_images_in_folder(questions)
 
         questions_in_ticket = create_tickets(questions)

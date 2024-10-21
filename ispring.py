@@ -43,8 +43,6 @@ def create_txt_file_category(questions, questions_by_category, exam_name, num, m
 def create_excel_file_for_ispring(questions: [Question], exam_name: str, num_box=0, max_questions_in_ticket=30):
     ticket = Ticket(questions)
     questions_by_category = ticket.questions_by_category
-    create_txt_file_category(ticket.all_questions, ticket.questions_by_category, exam_name, num_box,
-                             max_questions_in_ticket=max_questions_in_ticket)
 
     head = read_template()
     for category, question_list in questions_by_category.items():
@@ -68,10 +66,10 @@ def create_excel_file_for_ispring(questions: [Question], exam_name: str, num_box
         # Save the workbook to a file
         dir = os.path.join(str(OUTPUT_DIR), str(exam_name), str(num_box))
         os.makedirs(dir, exist_ok=True)
-        workbook.save(f'{dir}/{category[:2]}.xlsx')
-    for q in questions:
-        if q.image != '':
-            shutil.copyfile(q.image, os.path.join(dir, os.path.basename(q.image)))
+        workbook.save(os.path.join(dir, f'{category[:2]}.xlsx'))
+        for q in questions:
+            if q.image not in ('', None):
+                shutil.copyfile(q.image, os.path.join(dir, os.path.basename(q.image)))
 
 
 def create_tickets(questions: [Question]):
@@ -84,7 +82,7 @@ def create_tickets(questions: [Question]):
 
 
 def read_template(file=template_file_for_ispring):
-    if os.path.isfile(file):
+    if os.path.exists(file):
         workbook = openpyxl.load_workbook(file)
         page_name = workbook.sheetnames
         worksheet = workbook[page_name[0]]
