@@ -16,7 +16,7 @@ def check_images_in_folder(questions: [Question]):
             raise FileNotFoundError(f'[{file}]')
 
 
-if __name__ == '__main__':
+def main():
     exams_name_path = {}
 
     for file in get_all_files_from_pattern(INPUT_DIR, '.xlsx'):
@@ -36,3 +36,10 @@ if __name__ == '__main__':
             )
 
         print('OK')
+
+
+if __name__ == '__main__':
+    try:
+        main()
+    except KeyboardInterrupt:
+        print('Stop')
