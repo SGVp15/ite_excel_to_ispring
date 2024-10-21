@@ -6,21 +6,20 @@ import openpyxl
 
 from Question import Question
 from TICKET.ticket import Ticket
-from config import template_file_for_ispring, OUTPUT_DIR
+from config import template_file_for_ispring, OUTPUT_DIR, TXT_FILE_CATEGORY
 from list_utils import compress
 
 
 def create_txt_file_category(questions, questions_by_category, exam_name, num, max_questions_in_ticket=30):
     os.makedirs(os.path.join(str(OUTPUT_DIR), str(exam_name), str(num)), exist_ok=True)
 
-    info_category_file = os.path.join(str(OUTPUT_DIR), str(exam_name), str(num), 'info_ticket_import.txt')
+    info_category_file = os.path.join(str(OUTPUT_DIR), str(exam_name), str(num), TXT_FILE_CATEGORY)
     with open(info_category_file, 'w', encoding='utf-8') as f:
         count_all_sum = 0
         categories = sorted(questions_by_category.keys())
 
         list_max = [len(questions_by_category.get(category)) for category in categories]
         list_a = deepcopy(list_max)
-        list_a, list_max = compress(list_a, list_max, max_questions_in_ticket)
         # for i, category in enumerate(categories):
         #     list_question = questions_by_category.get(category)
         #     count_proc_cat = round(len(list_question) / len(questions) * max_questions_in_ticket)
@@ -34,7 +33,6 @@ def create_txt_file_category(questions, questions_by_category, exam_name, num, m
         list_a, list_max = compress(list_a, list_max, max_questions_in_ticket)
         for i, category in enumerate(categories):
             f.write(f'{category}\t{list_a[i]}\t{list_max[i]}\n')
-            print(f'\t{list_a[i]}\t{list_max[i]}\t{list_a[i] / list_max[i]}')
         if sum(list_max) < max_questions_in_ticket:
             f.write(f'\n{count_all_sum} Всего вопросов: {len(questions)}')
         else:
