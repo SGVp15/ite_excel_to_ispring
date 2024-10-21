@@ -3,8 +3,9 @@ import re
 
 from Excel.excel_reader import get_all_questions_from_excel_file
 from Question import Question
+from TICKET.ticket import Ticket
 from config import INPUT_DIR
-from ispring import create_excel_file_for_ispring, create_tickets
+from ispring import create_excel_file_for_ispring, create_tickets, create_txt_file_category
 from utils.utils import get_all_files_from_pattern
 
 
@@ -28,13 +29,9 @@ def main():
         questions: [Question] = get_all_questions_from_excel_file(file)
         check_images_in_folder(questions)
 
-        questions_in_ticket = create_tickets(questions)
-        for i, questions_t in enumerate(questions_in_ticket):
-            create_excel_file_for_ispring(
-                questions=questions_t, exam_name=exam_name, num_box=i,
-                max_questions_in_ticket=30
-            )
-
+        for i, ticket in enumerate(create_tickets(questions)):
+            create_excel_file_for_ispring(ticket=ticket, exam_name=exam_name, num_box=i)
+            create_txt_file_category(ticket, exam_name=exam_name, num=i, max_questions_in_ticket=30)
         print('OK')
 
 

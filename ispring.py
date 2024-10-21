@@ -10,7 +10,10 @@ from config import template_file_for_ispring, OUTPUT_DIR, TXT_FILE_CATEGORY
 from list_utils import compress
 
 
-def create_txt_file_category(questions, questions_by_category, exam_name, num, max_questions_in_ticket=30):
+def create_txt_file_category(ticket: Ticket, exam_name: str, num: int = 0, max_questions_in_ticket=30):
+    questions = ticket.questions
+    questions_by_category = ticket.questions_by_category
+
     os.makedirs(os.path.join(str(OUTPUT_DIR), str(exam_name), str(num)), exist_ok=True)
 
     info_category_file = os.path.join(str(OUTPUT_DIR), str(exam_name), str(num), TXT_FILE_CATEGORY)
@@ -37,11 +40,9 @@ def create_txt_file_category(questions, questions_by_category, exam_name, num, m
             f.write(f'\n{count_all_sum} Всего вопросов: {len(questions)}')
         else:
             f.write(f'\n{len(questions)}')
-    print('\n')
 
 
-def create_excel_file_for_ispring(questions: [Question], exam_name: str, num_box=0, max_questions_in_ticket=30):
-    ticket = Ticket(questions)
+def create_excel_file_for_ispring(ticket: Ticket, exam_name: str, num_box=0):
     questions_by_category = ticket.questions_by_category
 
     head = read_template()
@@ -67,17 +68,17 @@ def create_excel_file_for_ispring(questions: [Question], exam_name: str, num_box
         dir = os.path.join(str(OUTPUT_DIR), str(exam_name), str(num_box))
         os.makedirs(dir, exist_ok=True)
         workbook.save(os.path.join(dir, f'{category[:2]}.xlsx'))
-        for q in questions:
+        for q in ticket.questions:
             if q.image not in ('', None):
                 shutil.copyfile(q.image, os.path.join(dir, os.path.basename(q.image)))
 
 
-def create_tickets(questions: [Question]):
+def create_tickets(questions: [Question]) -> [Ticket]:
     tickets = []
     ticket = Ticket(questions)
     max_box = ticket.get_max_len_box()
     for i in range(max_box):
-        tickets.append(ticket.create_ticket(i))
+        tickets.append(ticket.create_unique_ticket(i))
     return tickets
 
 

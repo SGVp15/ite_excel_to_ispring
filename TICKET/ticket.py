@@ -37,12 +37,12 @@ class Ticket:
                 self.max_len_box = len(v)
         return self.max_len_box
 
-    def create_ticket(self, num):
+    def create_unique_ticket(self, num):
         questions = []
         questions.extend(self.questions_without_box)
 
-        for k, v in self.questions_by_box.items():
+        for _, v in self.questions_by_box.items():
             len_box = num % len(v)
             questions.append(v[len_box])
 
-        return questions
+        return Ticket(questions)
