@@ -1,10 +1,10 @@
 import os
 import re
+import shutil
 
 from Excel.excel_reader import get_all_questions_from_excel_file
 from Question import Question
-from TICKET.ticket import Ticket
-from config import INPUT_DIR
+from config import INPUT_DIR, OUTPUT_DIR, TXT_FILE_CATEGORY
 from ispring import create_excel_file_for_ispring, create_tickets, create_txt_file_category
 from utils.utils import get_all_files_from_pattern
 
@@ -15,6 +15,12 @@ def check_images_in_folder(questions: [Question]):
         file = q.image
         if not os.path.exists(str(file)):
             raise FileNotFoundError(f'[{file}]')
+
+
+def copy_images_to_folder_exam(ticket, dir):
+    for q in ticket.all_questions:
+        if q.image not in ('', None):
+            shutil.copyfile(q.image, os.path.join(dir, os.path.basename(q.image)))
 
 
 def main():
@@ -30,8 +36,13 @@ def main():
         check_images_in_folder(questions)
 
         for i, ticket in enumerate(create_tickets(questions)):
+            dir = os.path.join(str(OUTPUT_DIR), str(exam_name), str(i))
+            os.makedirs(dir, exist_ok=True)
+
             create_excel_file_for_ispring(ticket=ticket, exam_name=exam_name, num_box=i)
-            create_txt_file_category(ticket, exam_name=exam_name, num=i, max_questions_in_ticket=30)
+
+            create_txt_file_category(ticket, file_path=os.path.join(dir, TXT_FILE_CATEGORY), max_questions_in_ticket=30)
+            copy_images_to_folder_exam(ticket, dir)
         print('OK')
 
 
