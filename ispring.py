@@ -26,7 +26,7 @@ def create_txt_file_category(ticket: Ticket, file_path: str, max_questions_in_ti
             f.write(f'\n{count_all_sum} Всего вопросов: {len(questions)}')
 
 
-def create_excel_file_for_ispring(ticket: Ticket, exam_name: str, num_box=0):
+def create_excel_file_for_ispring(ticket: Ticket, exam_name: str, path_out: str, num_box=0):
     head = read_template()
     for category, question_list in ticket.questions_by_category.items():
         workbook = openpyxl.Workbook()
@@ -39,14 +39,14 @@ def create_excel_file_for_ispring(ticket: Ticket, exam_name: str, num_box=0):
         for q in question_list:
             row += 1
             values_to_write = ['MC', q.text_question, os.path.basename(q.image), '', '',
-                               f'*{q.answer_a}', q.answer_b, q.answer_c, q.answer_d,
+                               f'*{q.ans_a}', q.ans_b, q.ans_c, q.ans_d,
                                '', '', '', '', '', '', '', '', 1]
 
             # Write the numbers to the worksheet
             for i, v in enumerate(values_to_write):
                 worksheet.cell(row=row + 1, column=i + 1, value=str(v))
 
-        workbook.save(os.path.join(str(OUTPUT_DIR), str(exam_name), str(num_box), f'{category[:2]}.xlsx'))
+        workbook.save(os.path.join(path_out, f'{category[:2]}.xlsx'))
 
 
 def create_tickets(questions: [Question]) -> [Ticket]:

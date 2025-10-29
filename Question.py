@@ -2,10 +2,10 @@ class Question:
     def __init__(self):
         self.id_question: str = ''
         self.text_question: str = ''
-        self.answer_a: str = ''
-        self.answer_b: str = ''
-        self.answer_c: str = ''
-        self.answer_d: str = ''
+        self.ans_a: str = ''
+        self.ans_b: str = ''
+        self.ans_c: str = ''
+        self.ans_d: str = ''
         self.image: str = ''
         self.box_question: int
         self.category: str = ''
@@ -13,8 +13,8 @@ class Question:
 
     def __str__(self):
         return (f'{self.text_question}\t'
-                f'{self.answer_a}\t'''
-                f'{self.answer_b}\t'''
-                f'{self.answer_c}\t'''
-                f'{self.answer_d}\t'''
+                f'{self.ans_a}\t'''
+                f'{self.ans_b}\t'''
+                f'{self.ans_c}\t'''
+                f'{self.ans_d}\t'''
                 f'{self.image}\t')

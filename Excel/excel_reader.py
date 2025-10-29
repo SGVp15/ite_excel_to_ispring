@@ -64,11 +64,11 @@ def get_all_questions_from_excel_file(file: str) -> [Question]:
             else:
                 q.image = ''
 
-            q.answer_a = read_excel(wb, page_name, column_main, i + 1)
-            q.answer_b = read_excel(wb, page_name, column_main, i + 2)
-            q.answer_c = read_excel(wb, page_name, column_main, i + 3)
-            q.answer_d = read_excel(wb, page_name, column_main, i + 4)
-            if None in (q.answer_a, q.answer_b, q.answer_c, q.answer_d):
+            q.ans_a = read_excel(wb, page_name, column_main, i + 1)
+            q.ans_b = read_excel(wb, page_name, column_main, i + 2)
+            q.ans_c = read_excel(wb, page_name, column_main, i + 3)
+            q.ans_d = read_excel(wb, page_name, column_main, i + 4)
+            if None in (q.ans_a, q.ans_b, q.ans_c, q.ans_d):
                 continue
             num_q += 1
             q.category = read_excel(wb, page_name, column_category_question, i)
