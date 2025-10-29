@@ -56,7 +56,7 @@ def create_gift(ticket: Ticket, exam_name: str, path_out: str, num_box: int) -> 
         s = ''
         for i, q in enumerate(ticket.all_questions):
             q: Question
-            s += f'$CATEGORY: $module$/top/{exam_name}/{q.category}\n\n'
+            s += f'$CATEGORY: $module$/top/{exam_name}_{num_box}/{q.category}\n\n'
             s += (f"::Вопрос{i + 1}::{q.text_question}{{\n"
                   f"\t={q.ans_a}\n"
                   f"\t~{q.ans_b}\n"
