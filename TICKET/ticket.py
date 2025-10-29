@@ -65,3 +65,5 @@ def create_gift(ticket: Ticket, exam_name: str, path_out: str, num_box: int) -> 
                   f"}}\n\n"
                   )
         f.write(s)
+    with open(file=f'gift.txt', mode='a', encoding='utf-8') as f:
+        f.write(s)
