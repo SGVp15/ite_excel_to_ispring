@@ -5,7 +5,7 @@ import shutil
 from Excel.excel_reader import get_all_questions_from_excel_file
 from Question import Question
 from TICKET.ticket import create_gift
-from config import INPUT_DIR, OUTPUT_DIR, TXT_FILE_CATEGORY
+from config import INPUT_DIR, OUTPUT_DIR, TXT_FILE_CATEGORY, OUTPUT_DIR_GIFT
 from ispring import create_excel_file_for_ispring, create_tickets, create_txt_file_category
 from utils.utils import get_all_files_from_pattern
 
@@ -41,7 +41,7 @@ def main():
             os.makedirs(dir, exist_ok=True)
 
             create_excel_file_for_ispring(ticket=ticket, exam_name=exam_name, path_out=dir, num_box=i)
-            create_gift(ticket=ticket, exam_name=exam_name, path_out=dir, num_box=i)
+            create_gift(ticket=ticket, exam_name=exam_name, path_out=OUTPUT_DIR_GIFT, num_box=i)
             create_txt_file_category(ticket, file_path=os.path.join(dir, TXT_FILE_CATEGORY), max_questions_in_ticket=30)
             copy_images_to_folder_exam(ticket, dir)
         print('OK')
