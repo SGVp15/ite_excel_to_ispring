@@ -1,7 +1,7 @@
-import os
 import re
 import shutil
-
+import os
+import glob
 from Excel.excel_reader import get_all_questions_from_excel_file
 from Question import Question
 from TICKET.ticket import create_gift
@@ -45,6 +45,30 @@ def main():
             create_txt_file_category(ticket, file_path=os.path.join(dir, TXT_FILE_CATEGORY), max_questions_in_ticket=30)
             copy_images_to_folder_exam(ticket, dir)
         print('OK')
+    merge_gift_files_clean(OUTPUT_DIR_GIFT, './out/all_gift.txt')
+
+
+def merge_gift_files_clean(source_dir, output_file):
+    output_path = output_file
+    search_path = os.path.join(source_dir, '*.txt')
+    gift_files = glob.glob(search_path)
+
+    if not gift_files:
+        print(f"❌ В папке '{source_dir}' не найдено файлов с расширением .gift.")
+        return
+
+    try:
+        with open(output_path, 'w', encoding='utf-8') as outfile:
+            for filename in gift_files:
+                with open(filename, 'r', encoding='utf-8') as infile:
+                    outfile.write(infile.read())
+                    outfile.write('\n\n')
+
+        print(f"\n✅ Все файлы успешно объединены в: **{output_path}**")
+    except IOError as e:
+        print(f"\n❌ Произошла ошибка при работе с файлами: {e}")
+    except Exception as e:
+        print(f"\n❌ Произошла непредвиденная ошибка: {e}")
 
 
 if __name__ == '__main__':
