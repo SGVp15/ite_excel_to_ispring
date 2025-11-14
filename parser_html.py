@@ -9,7 +9,13 @@ def parse_quiz_review(html_content: str) -> dict:
     и полный список всех вариантов ответа, ограничивая поиск блоком role="main".
     """
     soup = BeautifulSoup(html_content, 'html.parser')
-    results = {'test_info': {}, 'вопросы': []}
+    results = {'test_info': {}, 'questions': []}
+
+    # название теста из заголовка
+    if 'название_теста' not in results['test_info']:
+        test_title_tag = soup.find('h1', class_="h2 mb-0")
+        if test_title_tag:
+            results['test_info']['test_name'] = test_title_tag.text
 
     # --- 1. Ограничение поиска блоком div role="main" ---
     main_content = soup.find('div', role='main')
@@ -33,12 +39,6 @@ def parse_quiz_review(html_content: str) -> dict:
                     continue
                 results['test_info'][header_text] = data_text
 
-    # название теста из заголовка
-    if 'название_теста' not in results['test_info']:
-        test_title_tag = soup.find('h1', class_="h2 mb-0")
-        if test_title_tag:
-            results['test_info']['test_name'] = test_title_tag.text
-
     # Очистка и нормализация текста
     for key, value in list(results['test_info'].items()):
         results['test_info'][key] = re.sub(r'\s+', ' ', value).strip()
@@ -52,18 +52,18 @@ def parse_quiz_review(html_content: str) -> dict:
 
         # Номер вопроса и статус
         q_no_tag = q_block.find('span', class_='qno')
-        question_data['номер'] = q_no_tag.text.strip() if q_no_tag else 'N/A'
+        question_data['number'] = q_no_tag.text.strip() if q_no_tag else 'N/A'
         q_state_tag = q_block.find('div', class_='state')
-        question_data['статус'] = q_state_tag.text.strip() if q_state_tag else 'N/A'
+        question_data['status'] = q_state_tag.text.strip() if q_state_tag else 'N/A'
 
         # !!! Извлечение Баллов (Новое поле) !!!
         grade_tag = q_block.find('div', class_='grade')
-        question_data['баллы'] = grade_tag.text.strip() if grade_tag else 'Баллы не найдены'
+        question_data['points'] = grade_tag.text.strip() if grade_tag else 'Баллы не найдены'
 
         # !!! Извлечение Текста вопроса (div class="qtext") !!!
         q_text_tag = q_block.find('div', class_='qtext')
         # Извлекаем текст из дочернего элемента div.clearfix, если он есть
-        question_data['вопрос'] = re.sub(r'\s+', ' ',
+        question_data['question_text'] = re.sub(r'\s+', ' ',
                                          q_text_tag.text.strip()) if q_text_tag else 'Текст вопроса не найден'
 
         # --- Извлечение всех вариантов ответа (data-region="answer-label") ---
@@ -93,8 +93,8 @@ def parse_quiz_review(html_content: str) -> dict:
                     # 'является_правильным': is_correct_option
                 )
 
-        question_data['все_варианты_ответа'] = all_options
-        results['вопросы'].append(question_data)
+        question_data['answers'] = all_options
+        results['questions'].append(question_data)
     return results
 
 
