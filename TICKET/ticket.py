@@ -56,6 +56,10 @@ def create_gift(ticket: Ticket, exam_name: str, path_out: str, num_box: int) -> 
         s = re.sub('=', '\\=', s)
         s = re.sub('~', '\\~', s)
         s = re.sub(r'[\n\r]+', '\n', s)
+        f = re.findall(r'[\u0300-\u036F]', s)
+        if f:
+            print(f'{f}\t{s}\n\n')
+        s = re.sub(r'[\u0300-\u036F]', '', s)
         return s
 
     with open(file=f'{path_out}/{exam_name}_{num_box}.txt', mode='w', encoding='utf-8') as f:
