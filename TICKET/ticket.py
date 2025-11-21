@@ -18,10 +18,10 @@ class Ticket:
         self.max_len_box = 1
 
         for question in self.all_questions:
-            if question.category not in self.questions_by_category.keys():
-                self.questions_by_category[question.category] = [question]
+            if question.anw_category not in self.questions_by_category.keys():
+                self.questions_by_category[question.anw_category] = [question]
             else:
-                self.questions_by_category[question.category].append(question)
+                self.questions_by_category[question.anw_category].append(question)
 
             if question.box_question is not None:
                 if question.box_question not in self.questions_by_box.keys():

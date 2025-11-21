@@ -1,6 +1,15 @@
+import os
 import re
+from itertools import count
+from multiprocessing.connection import answer_challenge
+
 from bs4 import BeautifulSoup
 import json
+
+from Excel.excel_reader import get_all_questions_from_excel_file
+from Question import Question
+from config import INPUT_DIR
+from utils.utils import get_all_files_from_pattern
 
 
 def parse_quiz_review(html_content: str) -> dict:
@@ -64,7 +73,7 @@ def parse_quiz_review(html_content: str) -> dict:
         q_text_tag = q_block.find('div', class_='qtext')
         # Извлекаем текст из дочернего элемента div.clearfix, если он есть
         question_data['question_text'] = re.sub(r'\s+', ' ',
-                                         q_text_tag.text.strip()) if q_text_tag else 'Текст вопроса не найден'
+                                                q_text_tag.text.strip()) if q_text_tag else 'Текст вопроса не найден'
 
         # --- Извлечение всех вариантов ответа (data-region="answer-label") ---
         all_options = []
@@ -99,16 +108,68 @@ def parse_quiz_review(html_content: str) -> dict:
 
 
 # --- Пример использования скрипта ---
-try:
-    with open('1.html', 'r', encoding='utf-8') as f:
-        html_content = f.read()
+def main():
+    try:
+        with open('2.html', 'r', encoding='utf-8') as f:
+            html_content = f.read()
 
-    parsed_data = parse_quiz_review(html_content)
+        parsed_data = parse_quiz_review(html_content)
 
-    # Выводим результат в консоль в формате JSON
-    print(json.dumps(parsed_data, indent=4, ensure_ascii=False))
+        # Выводим результат в консоль в формате JSON
+        a = json.dumps(parsed_data, indent=4, ensure_ascii=False)
+        # print(a)
+        python_object = json.loads(a)
+        # print(python_object)
+        return python_object
+    except FileNotFoundError:
+        print("Ошибка: Файл '1.html' не найден.")
+    except Exception as e:
+        print(f"Произошла ошибка при парсинге: {e}")
 
-except FileNotFoundError:
-    print("Ошибка: Файл '1.html' не найден.")
-except Exception as e:
-    print(f"Произошла ошибка при парсинге: {e}")
+
+if __name__ == '__main__':
+    exams_name_path = {}
+    for file in get_all_files_from_pattern(INPUT_DIR, '.xlsx'):
+        exam_name = re.sub(r'.xlsx$', '', os.path.basename(file))
+        exams_name_path[exam_name] = file
+
+    all_questions = []
+    for exam_name, file in exams_name_path.items():
+        # print(f'{exam_name}:', end='')
+        all_questions.extend(get_all_questions_from_excel_file(file))
+    q_my = main()['questions']
+    quests = []
+    for i,q in enumerate(q_my):
+        c = Question(
+            text_question=q.get('question_text'),
+            ans_a=q.get('answers')[0],
+            ans_b=q.get('answers')[1],
+            ans_c=q.get('answers')[2],
+            ans_d=q.get('answers')[3])
+
+        c.status = q.get('status')
+        print(q.get('number'), c.status , q.get('status'))
+        quests.append(c)
+
+    # category: dict
+    all_questions = [q for q in all_questions if q in quests]
+    not_questions = [q for q in all_questions if q not in quests]
+
+    answer_category = {}
+    all_category = {}
+    for q in all_questions:
+        answer_category[q.category] = 0
+        all_category[q.category] = 0
+
+    for i, q in enumerate(quests):
+        q: Question
+        for q_all in all_questions:
+            q_all: Question
+            if q == q_all:
+                all_category[q_all.category] += 1
+                if q.status == 'Верно':
+                    print(q_all.category,q.status)
+                    answer_category[q_all.category] += 1
+                break
+    for k in sorted(all_category.keys()):
+        print(f'{k}\t{answer_category[k]}\t{all_category[k]}')
