@@ -1,8 +1,8 @@
-import pickle
+import glob
+import os
 import re
 import shutil
-import os
-import glob
+
 from Excel.excel_reader import get_all_questions_from_excel_file
 from Question import Question
 from TICKET.ticket import create_gift

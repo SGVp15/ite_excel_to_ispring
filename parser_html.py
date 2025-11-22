@@ -48,10 +48,6 @@ def parse_quiz_review(html_content: str) -> dict:
                     continue
                 results['test_info'][header_text] = data_text
 
-    # Очистка и нормализация текста
-    for key, value in list(results['test_info'].items()):
-        results['test_info'][key] = re.sub(r'\s+', ' ', value).strip()
-
     # --- 3. Вопросы, ответы и все варианты ---
     # Ищем все блоки вопросов внутри main_content
     question_blocks = main_content.find_all('div', class_=re.compile(r'^que '))
@@ -82,7 +78,7 @@ def parse_quiz_review(html_content: str) -> dict:
         if answer_container:
             # Проходим по всем блокам вариантов (r0, r1, r2...)
             for option_div in answer_container.find_all('div', recursive=False):
-                if not re.match(r'r\d+', ' '.join(option_div.get('class', []))):
+                if not re.match(r'\d+', ' '.join(option_div.get('class', []))):
                     continue
 
                 # Ищем контейнер текста ответа (по data-region="answer-label")
@@ -108,9 +104,9 @@ def parse_quiz_review(html_content: str) -> dict:
 
 
 # --- Пример использования скрипта ---
-def main():
+def main(filename='2.html'):
     try:
-        with open('2.html', 'r', encoding='utf-8') as f:
+        with open(filename, 'r', encoding='utf-8') as f:
             html_content = f.read()
 
         parsed_data = parse_quiz_review(html_content)
@@ -127,6 +123,186 @@ def main():
         print(f"Произошла ошибка при парсинге: {e}")
 
 
+def generate_html_report(test_info: dict, all_category: dict, answer_category: dict, filename="quiz_report.html"):
+    """
+    Генерирует полную HTML-страницу с информацией о тесте и результатами по категориям.
+    """
+
+    # --- 1. Подготовка данных для таблицы ---
+    sorted_keys = sorted(all_category.keys())
+
+    table_rows = ""
+    for k in sorted_keys:
+        total = all_category[k]
+        correct = answer_category[k]
+        # Избегаем деления на ноль, если total = 0
+        percentage = (correct / total * 100) if total > 0 else 0
+
+        # Строка таблицы для категории
+        table_rows += f"""
+        <tr>
+            <td>{k}</td>
+            <td class="numeric correct">{correct}</td>
+            <td class="numeric total">{total}</td>
+            <td class="numeric">
+                <div class="progress-bar">
+                    <div style="width: {percentage:.0f}%;" class="progress-fill pass "></div>
+                </div>
+            </td>
+        </tr>
+        """
+
+    # --- 2. HTML-шаблон ---
+
+    html_content = f"""<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отчет по тесту: {test_info.get('test_name', 'Без названия')}</title>
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }}
+        .container {{
+            max-width: 900px;
+            margin: auto;
+            background: #fff;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }}
+        h1 {{
+            color: #0056b3;
+            border-bottom: 3px solid #0056b3;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }}
+        h2 {{
+            color: #555;
+            margin-top: 30px;
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 5px;
+        }}
+        .summary-box {{
+            background: #e9f7ff;
+            border: 1px solid #b3e0ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }}
+        .summary-box p {{
+            margin: 5px 0;
+            line-height: 1.5;
+        }}
+        .summary-box strong {{
+            color: #0056b3;
+            display: inline-block;
+            width: 150px;
+        }}
+        table {{
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }}
+        th, td {{
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }}
+        th {{
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }}
+        tr:nth-child(even) {{
+            background-color: #f2f2f2;
+        }}
+        .numeric {{
+            text-align: center;
+            width: 80px;
+        }}
+        .grade-score {{
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #444444;
+        }}
+        /* Стили для прогресс-бара */
+        .progress-bar {{
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            height: 25px;
+            overflow: hidden;
+            width: 150px; /* Фиксированная ширина */
+            margin: 0 auto;
+        }}
+        .progress-fill {{
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9em;
+            transition: width 0.5s ease-in-out;
+        }}
+        .pass {{
+            background-color: #28a745; /* Зеленый для прохождения */
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Отчет о прохождении экзамена: {test_info.get('test_name', 'Н/Д')}</h1>
+
+        <h2>Общая информация</h2>
+        <div class="summary-box">
+            <p><strong>Пользователь:</strong> {test_info.get('user', 'Н/Д')}</p>
+            <p><strong>Начало экзамена:</strong> {test_info.get('Тест начат', 'Н/Д')}</p>
+            <p><strong>Завершение экзамена:</strong> {test_info.get('Завершен', 'Н/Д')}</p>
+            <p><strong>Итоговая оценка:</strong> <span class="grade-score">{test_info.get('Оценка', 'Н/Д')}</span></p>
+            <p><strong>Проходной балл:</strong> <span class="grade-score">21</span></p>
+        </div>
+
+        <h2>Результаты по категориям</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Категория</th>
+                    <th class="numeric">Верно</th>
+                    <th class="numeric">Всего</th>
+                    <th class="numeric"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {table_rows}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
+    """
+
+    # --- 3. Сохранение файла ---
+
+    try:
+        with open(filename, 'w', encoding='utf-8') as f:
+            f.write(html_content)
+        print(f"\n✅ HTML-отчет успешно создан: {filename}")
+    except Exception as e:
+        print(f"\n❌ Ошибка при записи файла: {e}")
+
+
+def clean_test_infp(data):
+    # Очистка и нормализация текста
+    for key, value in data.items():
+        data[key] = re.sub(r'\s+', ' ', value).strip()
+    data['Оценка'] = re.sub(r',\d+', '', data['Оценка'])
+    return data
+
+
 if __name__ == '__main__':
     exams_name_path = {}
     for file in get_all_files_from_pattern(INPUT_DIR, '.xlsx'):
@@ -137,9 +313,12 @@ if __name__ == '__main__':
     for exam_name, file in exams_name_path.items():
         # print(f'{exam_name}:', end='')
         all_questions.extend(get_all_questions_from_excel_file(file))
-    q_my = main()['questions']
+    filename = '2.html'
+    data = main(filename=filename)
+    q_my = data['questions']
+    test_info = data['test_info']
     quests = []
-    for i,q in enumerate(q_my):
+    for i, q in enumerate(q_my):
         c = Question(
             text_question=q.get('question_text'),
             ans_a=q.get('answers')[0],
@@ -148,10 +327,9 @@ if __name__ == '__main__':
             ans_d=q.get('answers')[3])
 
         c.status = q.get('status')
-        print(q.get('number'), c.status , q.get('status'))
+        # print(q.get('number'), c.status , q.get('status'))
         quests.append(c)
 
-    # category: dict
     all_questions = [q for q in all_questions if q in quests]
     not_questions = [q for q in all_questions if q not in quests]
 
@@ -168,8 +346,15 @@ if __name__ == '__main__':
             if q == q_all:
                 all_category[q_all.category] += 1
                 if q.status == 'Верно':
-                    print(q_all.category,q.status)
                     answer_category[q_all.category] += 1
                 break
+    clean_test_infp(test_info)
+    print(test_info)
+    print(test_info['Тест начат'])
+    print(test_info['Завершен'])
+
     for k in sorted(all_category.keys()):
         print(f'{k}\t{answer_category[k]}\t{all_category[k]}')
+    print(test_info['Оценка'])
+
+    generate_html_report(test_info, all_category, answer_category, filename=f'report_{filename}')
